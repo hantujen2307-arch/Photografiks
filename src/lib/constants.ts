@@ -104,7 +104,7 @@ export const DEFAULT_PACKAGES: PackageItem[] = [
 
 export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
   {
-    id: "port-1",
+    id: "b0000000-0000-0000-0000-000000000001",
     title: "Aura of Serenity",
     category: "Portrait",
     image_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
@@ -113,7 +113,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 1
   },
   {
-    id: "port-2",
+    id: "b0000000-0000-0000-0000-000000000002",
     title: "Timeless Devotion",
     category: "Couple",
     image_url: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=1200&q=80",
@@ -122,7 +122,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 2
   },
   {
-    id: "port-3",
+    id: "b0000000-0000-0000-0000-000000000003",
     title: "Summit of Triumph",
     category: "Graduation",
     image_url: "https://images.unsplash.com/photo-1627556704290-2b1f5853ff78?auto=format&fit=crop&w=1200&q=80",
@@ -131,7 +131,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 3
   },
   {
-    id: "port-4",
+    id: "b0000000-0000-0000-0000-000000000004",
     title: "Golden Kinship",
     category: "Family",
     image_url: "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80",
@@ -140,7 +140,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 4
   },
   {
-    id: "port-5",
+    id: "b0000000-0000-0000-0000-000000000005",
     title: "Monochrome Gaze",
     category: "Portrait",
     image_url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80",
@@ -149,7 +149,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 5
   },
   {
-    id: "port-6",
+    id: "b0000000-0000-0000-0000-000000000006",
     title: "Quiet Symphony",
     category: "Editorial",
     image_url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80",
@@ -158,7 +158,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 6
   },
   {
-    id: "port-7",
+    id: "b0000000-0000-0000-0000-000000000007",
     title: "Eternal Promise",
     category: "Couple",
     image_url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
@@ -167,7 +167,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 7
   },
   {
-    id: "port-8",
+    id: "b0000000-0000-0000-0000-000000000008",
     title: "Joyous Milestone",
     category: "Graduation",
     image_url: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
@@ -176,7 +176,7 @@ export const DEFAULT_PORTFOLIO: PortfolioItem[] = [
     sort_order: 8
   },
   {
-    id: "port-9",
+    id: "b0000000-0000-0000-0000-000000000009",
     title: "Gala Evening Intimacy",
     category: "Event",
     image_url: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",

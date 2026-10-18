@@ -11,6 +11,7 @@ import {
   updateStoredPortfolioItem,
   createStoredPortfolioItem,
   deleteStoredPortfolioItem,
+  toPortfolioUuid,
 } from "@/lib/data/portfolio-store";
 import { PortfolioItem } from "@/types";
 
@@ -45,7 +46,7 @@ export async function GET() {
     console.error("Error reading portfolio from Supabase:", err);
   }
 
-  // Fallback to local persistent store
+  // Fallback to local persistent store (which returns canonical UUIDs)
   return NextResponse.json({ items: getStoredPortfolio() });
 }
 
@@ -89,11 +90,9 @@ export async function POST(request: NextRequest) {
     }
 
     let finalImageUrl = directImageUrl ? directImageUrl.trim() : "";
-    let storagePath: string | null = null;
+    let storagePath = "";
 
-    const supabase = await getSupabaseClient();
-
-    // 1. Process File Upload to Supabase Storage if file is attached
+    // 1. Process File Upload if a file is attached
     if (file && file.size > 0) {
       if (!file.type.startsWith("image/")) {
         return NextResponse.json(
@@ -151,6 +150,7 @@ export async function POST(request: NextRequest) {
     let resultItem: PortfolioItem | null = null;
 
     // 2. Insert into Supabase Database
+    const supabase = await getSupabaseClient();
     if (supabase) {
       const { data: inserted, error: insertError } = await supabase
         .from("portfolio_items")
@@ -164,7 +164,7 @@ export async function POST(request: NextRequest) {
           ? "Foto berhasil diunggah ke Storage, namun gagal menyimpan ke database: "
           : "Gagal menyimpan data ke database: ";
         return NextResponse.json(
-          { error: prefix + insertError.message },
+          { error: prefix + insertError.message, uploadedImageUrl: finalImageUrl || undefined },
           { status: 500 }
         );
       }
@@ -234,13 +234,48 @@ export async function PUT(request: NextRequest) {
       directImageUrl = body.image_url;
     }
 
-    if (!id) {
+    if (!id || !id.trim()) {
       return NextResponse.json({ error: "ID portofolio wajib disertakan." }, { status: 400 });
     }
 
+    // Resolve legacy ID (like 'port-8') to valid canonical UUID
+    const targetUuid = toPortfolioUuid(id.trim());
     const supabase = await getSupabaseClient();
-    const updateData: Record<string, unknown> = {};
 
+    // Fallback item from local store
+    const localList = getStoredPortfolio();
+    const existingLocal = localList.find((p) => p.id === id || toPortfolioUuid(p.id) === targetUuid);
+
+    // Find if this record already exists in Supabase
+    let existingDbItem: PortfolioItem | null = null;
+    if (supabase) {
+      try {
+        const { data: byId } = await supabase
+          .from("portfolio_items")
+          .select("*")
+          .eq("id", targetUuid)
+          .maybeSingle();
+
+        if (byId) {
+          existingDbItem = byId;
+        } else if (title) {
+          const { data: byTitle } = await supabase
+            .from("portfolio_items")
+            .select("*")
+            .eq("title", title)
+            .maybeSingle();
+          if (byTitle) {
+            existingDbItem = byTitle;
+          }
+        }
+      } catch (checkErr) {
+        console.warn("[SUPABASE_ITEM_LOOKUP_WARNING]", checkErr);
+      }
+    }
+
+    const actualDbId = existingDbItem ? existingDbItem.id : targetUuid;
+
+    const updateData: Record<string, unknown> = {};
     if (title !== undefined) updateData.title = title;
     if (category !== undefined) updateData.category = category;
     if (description !== undefined) updateData.description = description;
@@ -248,6 +283,8 @@ export async function PUT(request: NextRequest) {
     if (sortOrder !== undefined) updateData.sort_order = sortOrder;
 
     // 1. Process File Upload if a new file is attached
+    let finalImageUrl = directImageUrl && directImageUrl.trim() ? directImageUrl.trim() : "";
+
     if (file && file.size > 0) {
       if (!file.type.startsWith("image/")) {
         return NextResponse.json(
@@ -281,39 +318,89 @@ export async function PUT(request: NextRequest) {
         return NextResponse.json({ error: uploadRes.error }, { status: 500 });
       }
 
-      updateData.image_url = uploadRes.url || "";
+      finalImageUrl = uploadRes.url || "";
+      updateData.image_url = finalImageUrl;
       updateData.storage_path = filePath;
-    } else if (directImageUrl && directImageUrl.trim()) {
-      updateData.image_url = directImageUrl.trim();
+    } else if (finalImageUrl) {
+      updateData.image_url = finalImageUrl;
     }
 
     let returnedItem: PortfolioItem | null = null;
 
-    // 2. Perform Database Update
+    // 2. Perform Database Update or Upsert
     if (supabase) {
-      const { data: updated, error: updateError } = await supabase
-        .from("portfolio_items")
-        .update(updateData)
-        .eq("id", id)
-        .select()
-        .single();
+      try {
+        if (existingDbItem) {
+          const { data: updated, error: updateError } = await supabase
+            .from("portfolio_items")
+            .update(updateData)
+            .eq("id", actualDbId)
+            .select()
+            .single();
 
-      if (updateError) {
-        console.error("[SUPABASE_DB_UPDATE_ERROR]", updateError);
-        const prefix = file
-          ? "Foto berhasil diunggah ke Storage, namun gagal memperbarui database: "
-          : "Gagal memperbarui database: ";
+          if (updateError) {
+            console.error("[SUPABASE_DB_UPDATE_ERROR]", updateError);
+            const prefix = file
+              ? "Foto berhasil diunggah ke Storage, namun gagal memperbarui database: "
+              : "Gagal memperbarui database: ";
+            return NextResponse.json(
+              { error: prefix + updateError.message, uploadedImageUrl: finalImageUrl || undefined },
+              { status: 500 }
+            );
+          }
+
+          returnedItem = updated;
+        } else {
+          // Row does not exist in DB yet (e.g. first edit of default portfolio item) -> UPSERT with canonical UUID
+          const fullItemPayload = {
+            id: actualDbId,
+            title: title || existingLocal?.title || "Untitled",
+            category: category || existingLocal?.category || "Portrait",
+            description: description !== undefined ? description : (existingLocal?.description || ""),
+            image_url: updateData.image_url || existingLocal?.image_url || finalImageUrl || "",
+            storage_path: updateData.storage_path || existingLocal?.storage_path || null,
+            is_featured: isFeatured !== undefined ? isFeatured : (existingLocal?.is_featured || false),
+            sort_order: sortOrder !== undefined ? sortOrder : (existingLocal?.sort_order || 0),
+          };
+
+          const { data: upserted, error: upsertError } = await supabase
+            .from("portfolio_items")
+            .upsert(fullItemPayload)
+            .select()
+            .single();
+
+          if (upsertError) {
+            console.error("[SUPABASE_DB_UPSERT_ERROR]", upsertError);
+            const prefix = file
+              ? "Foto berhasil diunggah ke Storage, namun gagal menyimpan ke database: "
+              : "Gagal menyimpan ke database: ";
+            return NextResponse.json(
+              { error: prefix + upsertError.message, uploadedImageUrl: finalImageUrl || undefined },
+              { status: 500 }
+            );
+          }
+
+          returnedItem = upserted;
+        }
+      } catch (dbErr: unknown) {
+        console.error("[SUPABASE_DB_EXCEPTION]", dbErr);
+        const msg = dbErr instanceof Error ? dbErr.message : String(dbErr);
         return NextResponse.json(
-          { error: prefix + updateError.message },
+          {
+            error: `Gagal memperbarui database Supabase (${msg}).`,
+            uploadedImageUrl: finalImageUrl || undefined,
+          },
           { status: 500 }
         );
       }
-
-      returnedItem = updated;
     }
 
     // 3. Update persistent local store
-    const locallyUpdated = updateStoredPortfolioItem(id, updateData as Partial<PortfolioItem>);
+    const locallyUpdated = updateStoredPortfolioItem(id, {
+      ...updateData,
+      id: actualDbId,
+    } as Partial<PortfolioItem>);
+
     if (!returnedItem) {
       returnedItem = locallyUpdated;
     }
@@ -350,18 +437,19 @@ export async function DELETE(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
 
-    if (!id) {
+    if (!id || !id.trim()) {
       return NextResponse.json({ error: "ID portofolio diperlukan." }, { status: 400 });
     }
 
+    const targetUuid = toPortfolioUuid(id.trim());
     const supabase = await getSupabaseClient();
     if (supabase) {
       // Get item first to check storage_path
       const { data: item } = await supabase
         .from("portfolio_items")
         .select("storage_path")
-        .eq("id", id)
-        .single();
+        .eq("id", targetUuid)
+        .maybeSingle();
 
       if (item?.storage_path) {
         // Clean up Supabase Storage file
@@ -372,7 +460,7 @@ export async function DELETE(request: NextRequest) {
         }
       }
 
-      const { error } = await supabase.from("portfolio_items").delete().eq("id", id);
+      const { error } = await supabase.from("portfolio_items").delete().eq("id", targetUuid);
       if (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });
       }

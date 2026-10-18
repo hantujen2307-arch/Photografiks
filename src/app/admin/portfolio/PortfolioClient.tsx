@@ -136,13 +136,19 @@ export default function PortfolioClient() {
         });
         const data = await res.json();
         if (!res.ok) {
+          if (data.uploadedImageUrl) {
+            setImageUrl(data.uploadedImageUrl);
+            setFile(null);
+          }
           throw new Error(data.error || "Gagal memperbarui portofolio.");
         }
 
         // Instant optimistic state update
         if (data.item) {
           setItems((prev) =>
-            prev.map((item) => (item.id === editingItem.id ? data.item : item))
+            prev.map((item) =>
+              item.id === editingItem.id || item.id === data.item.id ? data.item : item
+            )
           );
         }
         setSuccessMessage(`Foto dan data "${title}" berhasil diperbarui!`);
@@ -153,6 +159,10 @@ export default function PortfolioClient() {
         });
         const data = await res.json();
         if (!res.ok) {
+          if (data.uploadedImageUrl) {
+            setImageUrl(data.uploadedImageUrl);
+            setFile(null);
+          }
           throw new Error(data.error || "Gagal mengunggah foto.");
         }
 
