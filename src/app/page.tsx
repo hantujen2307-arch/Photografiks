@@ -4,13 +4,11 @@ import Footer from "@/components/common/Footer";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturedPortfolio from "@/components/home/FeaturedPortfolio";
 import PackagesSection from "@/components/home/PackagesSection";
-import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FaqSection from "@/components/home/FaqSection";
 import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
 import { getStoredPackages } from "@/lib/data/packages-store";
 import {
   DEFAULT_PORTFOLIO,
-  DEFAULT_TESTIMONIALS,
   DEFAULT_FAQS,
   DEFAULT_SITE_SETTINGS,
 } from "@/lib/constants";
@@ -21,7 +19,6 @@ export const revalidate = 60;
 export default async function HomePage() {
   let packages = getStoredPackages();
   let portfolio = DEFAULT_PORTFOLIO;
-  let testimonials = DEFAULT_TESTIMONIALS;
   let faqs = DEFAULT_FAQS;
   let settings = DEFAULT_SITE_SETTINGS;
 
@@ -39,11 +36,6 @@ export default async function HomePage() {
           .select("*")
           .order("sort_order", { ascending: true }),
         supabase
-          .from("testimonials")
-          .select("*")
-          .eq("is_active", true)
-          .order("sort_order", { ascending: true }),
-        supabase
           .from("faqs")
           .select("*")
           .eq("is_active", true)
@@ -51,12 +43,11 @@ export default async function HomePage() {
         supabase.from("site_settings").select("key, value"),
       ]);
 
-      const [pkgRes, portRes, testRes, faqRes, settingsRes] = await withTimeout(
+      const [pkgRes, portRes, faqRes, settingsRes] = await withTimeout(
         fetchAllData,
         [
           { data: packages },
           { data: DEFAULT_PORTFOLIO },
-          { data: DEFAULT_TESTIMONIALS },
           { data: DEFAULT_FAQS },
           { data: [] },
         ] as any,
@@ -65,7 +56,6 @@ export default async function HomePage() {
 
       if (pkgRes?.data && pkgRes.data.length > 0) packages = pkgRes.data;
       if (portRes?.data && portRes.data.length > 0) portfolio = portRes.data;
-      if (testRes?.data && testRes.data.length > 0) testimonials = testRes.data;
       if (faqRes?.data && faqRes.data.length > 0) faqs = faqRes.data;
       if (settingsRes?.data && settingsRes.data.length > 0) {
         const mergedSettings = { ...DEFAULT_SITE_SETTINGS };
@@ -90,7 +80,6 @@ export default async function HomePage() {
       />
       <FeaturedPortfolio items={portfolio} />
       <PackagesSection packages={packages} />
-      <TestimonialsSection testimonials={testimonials} />
       <FaqSection faqs={faqs} />
       <Footer settings={settings} />
     </main>
