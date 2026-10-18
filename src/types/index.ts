@@ -5,6 +5,7 @@ export interface PackageItem {
   slug: string;
   name: string;
   tagline?: string;
+  image_url?: string;
   price: number;
   duration_minutes: number;
   photo_count_text: string;

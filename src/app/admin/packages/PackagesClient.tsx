@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Plus,
   Edit2,
@@ -18,7 +19,7 @@ import { formatIDR } from "@/lib/utils";
 export default function PackagesClient() {
   const [packages, setPackages] = useState<PackageItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [_error, setError] = useState<string | null>(null);
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,6 +29,7 @@ export default function PackagesClient() {
   // Form Fields
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
   const [price, setPrice] = useState(850000);
   const [duration, setDuration] = useState(60);
   const [photoCountText, setPhotoCountText] = useState("");
@@ -63,6 +65,7 @@ export default function PackagesClient() {
     setEditingPackage(null);
     setName("");
     setTagline("");
+    setImageUrl("");
     setPrice(1000000);
     setDuration(60);
     setPhotoCountText("20 Foto Retouch + RAW");
@@ -76,6 +79,7 @@ export default function PackagesClient() {
     setEditingPackage(pkg);
     setName(pkg.name);
     setTagline(pkg.tagline || "");
+    setImageUrl(pkg.image_url || "");
     setPrice(pkg.price);
     setDuration(pkg.duration_minutes);
     setPhotoCountText(pkg.photo_count_text || "");
@@ -97,6 +101,7 @@ export default function PackagesClient() {
     const payload = {
       name,
       tagline,
+      image_url: imageUrl,
       price: Number(price),
       duration_minutes: Number(duration),
       photo_count_text: photoCountText,
@@ -234,6 +239,18 @@ export default function PackagesClient() {
                   </button>
                 </div>
 
+                {pkg.image_url && (
+                  <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-3 border border-[#E8E1D5]">
+                    <Image
+                      src={pkg.image_url}
+                      alt={pkg.name}
+                      fill
+                      className="object-cover"
+                      sizes="300px"
+                    />
+                  </div>
+                )}
+
                 <h3 className="font-serif text-xl font-normal text-[#161514] mb-1">
                   {pkg.name}
                 </h3>
@@ -338,6 +355,29 @@ export default function PackagesClient() {
                   placeholder="e.g. Potret personal dengan estetika majalah fashion."
                   className="w-full px-4 py-2.5 rounded-xl border border-[#E8E1D5] text-xs bg-[#FCFAF6] focus:outline-hidden focus:border-[#161514]"
                 />
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-1">
+                  URL Foto Cover Paket (Editorial Photography)
+                </label>
+                <input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => setImageUrl(e.target.value)}
+                  placeholder="https://images.unsplash.com/photo-..."
+                  className="w-full px-4 py-2.5 rounded-xl border border-[#E8E1D5] text-xs bg-[#FCFAF6] focus:outline-hidden focus:border-[#161514]"
+                />
+                {imageUrl && (
+                  <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden mt-2 border border-[#E8E1D5]">
+                    <Image
+                      src={imageUrl}
+                      alt="Preview"
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">

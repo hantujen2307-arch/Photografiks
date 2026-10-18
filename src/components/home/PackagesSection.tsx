@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Check, Clock, Image as ImageIcon, ArrowRight, Sparkles } from "lucide-react";
 import { PackageItem } from "@/types";
 import { DEFAULT_PACKAGES } from "@/lib/constants";
@@ -45,6 +46,20 @@ export default function PackagesSection({
                 )}
 
                 <div>
+                  {/* Package Hero Image */}
+                  {pkg.image_url && (
+                    <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-6 shadow-xs border border-current/10">
+                      <Image
+                        src={pkg.image_url}
+                        alt={pkg.name}
+                        fill
+                        className="object-cover object-center transition-transform duration-500 hover:scale-105"
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-50 pointer-events-none" />
+                    </div>
+                  )}
+
                   {/* Package Header */}
                   <div className="mb-6">
                     <span

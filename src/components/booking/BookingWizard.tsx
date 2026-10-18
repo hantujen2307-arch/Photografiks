@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import {
   PackageItem,
   Booking,
@@ -299,6 +300,19 @@ export default function BookingWizard({
                         : "bg-white text-[#161514] border-[#E8E1D5] hover:border-[#161514]/40"
                     }`}
                   >
+                    {pkg.image_url && (
+                      <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-5 border border-current/10">
+                        <Image
+                          src={pkg.image_url}
+                          alt={pkg.name}
+                          fill
+                          className="object-cover object-center"
+                          sizes="(max-width: 768px) 100vw, 400px"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-50" />
+                      </div>
+                    )}
+
                     <div className="flex items-start justify-between mb-4">
                       <div>
                         <span

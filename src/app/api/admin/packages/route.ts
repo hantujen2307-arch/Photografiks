@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { name, tagline, price, duration_minutes, photo_count_text, features, is_active, sort_order } = body;
+    const { name, tagline, image_url, price, duration_minutes, photo_count_text, features, is_active, sort_order } = body;
 
     if (!name || price === undefined || !duration_minutes) {
       return NextResponse.json({ error: "Nama, harga, dan durasi wajib diisi." }, { status: 400 });
@@ -54,6 +54,7 @@ export async function POST(request: NextRequest) {
         slug: slug + "-" + Date.now().toString(36),
         name,
         tagline: tagline || "",
+        image_url: image_url || null,
         price: Number(price),
         duration_minutes: Number(duration_minutes),
         photo_count_text: photo_count_text || "Semua File Asli",
@@ -83,7 +84,7 @@ export async function PUT(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { id, name, tagline, price, duration_minutes, photo_count_text, features, is_active, sort_order } = body;
+    const { id, name, tagline, image_url, price, duration_minutes, photo_count_text, features, is_active, sort_order } = body;
 
     if (!id) {
       return NextResponse.json({ error: "ID paket diperlukan" }, { status: 400 });
@@ -97,6 +98,7 @@ export async function PUT(request: NextRequest) {
     const updateData: Record<string, unknown> = {};
     if (name) updateData.name = name;
     if (tagline !== undefined) updateData.tagline = tagline;
+    if (image_url !== undefined) updateData.image_url = image_url;
     if (price !== undefined) updateData.price = Number(price);
     if (duration_minutes !== undefined) updateData.duration_minutes = Number(duration_minutes);
     if (photo_count_text !== undefined) updateData.photo_count_text = photo_count_text;
