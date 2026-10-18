@@ -11,7 +11,7 @@ import { SiteSettings, TestimonialItem, FaqItem } from "@/types";
 import { DEFAULT_SITE_SETTINGS, DEFAULT_TESTIMONIALS, DEFAULT_FAQS } from "@/lib/constants";
 
 export default function SettingsClient() {
-  const [activeTab, setActiveTab] = useState<"general" | "contact" | "about" | "testimonials" | "faqs">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "contact" | "testimonials" | "faqs">("general");
 
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>(DEFAULT_TESTIMONIALS);
@@ -135,7 +135,6 @@ export default function SettingsClient() {
         {[
           { key: "general", label: "Homepage & Headline" },
           { key: "contact", label: "Kontak & Media Sosial" },
-          { key: "about", label: "Kisah & Filosofi Studio" },
           { key: "testimonials", label: "Testimoni Klien" },
           { key: "faqs", label: "Tanya Jawab (FAQ)" },
         ].map((tab) => (
@@ -301,54 +300,7 @@ export default function SettingsClient() {
         </form>
       )}
 
-      {/* TAB 3: About Story */}
-      {activeTab === "about" && (
-        <form onSubmit={handleSaveGeneral} className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-8 shadow-xs space-y-6">
-          <div className="border-b border-[#F4EFE6] pb-4">
-            <h3 className="font-serif text-xl font-normal text-[#161514]">
-              Kisah Studio &amp; Filosofi Fotografer
-            </h3>
-            <p className="text-xs text-[#6B6862] font-light mt-1">
-              Menjelaskan nilai artistik, kenyamanan sesi, dan integritas visual MOMEN.POTRAIT.
-            </p>
-          </div>
 
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
-              Cerita Studio (About Story)
-            </label>
-            <textarea
-              rows={4}
-              value={settings.about_story}
-              onChange={(e) => setSettings({ ...settings, about_story: e.target.value })}
-              className="w-full p-4 rounded-xl border border-[#E8E1D5] text-sm bg-[#FCFAF6] leading-relaxed focus:outline-hidden focus:border-[#161514]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
-              Filosofi Fotografi (About Philosophy)
-            </label>
-            <textarea
-              rows={3}
-              value={settings.about_philosophy}
-              onChange={(e) => setSettings({ ...settings, about_philosophy: e.target.value })}
-              className="w-full p-4 rounded-xl border border-[#E8E1D5] text-sm bg-[#FCFAF6] leading-relaxed focus:outline-hidden focus:border-[#161514]"
-            />
-          </div>
-
-          <div className="pt-4 border-t border-[#F4EFE6] flex justify-end">
-            <button
-              type="submit"
-              disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#161514] text-white text-xs uppercase tracking-wider font-semibold hover:bg-[#2A2926] disabled:opacity-50 transition-all shadow-md"
-            >
-              <Save className="w-4 h-4" />
-              <span>{saving ? "Menyimpan..." : "Simpan Cerita"}</span>
-            </button>
-          </div>
-        </form>
-      )}
 
       {/* TAB 4: Testimonials */}
       {activeTab === "testimonials" && (

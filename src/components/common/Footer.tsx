@@ -97,11 +97,6 @@ export default function Footer({
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:text-white transition-colors">
-                  Tentang Fotografer
-                </Link>
-              </li>
-              <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
                   Kontak Studio
                 </Link>
