@@ -4,7 +4,6 @@ import Footer from "@/components/common/Footer";
 import HeroSection from "@/components/home/HeroSection";
 import FeaturedPortfolio from "@/components/home/FeaturedPortfolio";
 import PackagesSection from "@/components/home/PackagesSection";
-import BookingProcess from "@/components/home/BookingProcess";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FaqSection from "@/components/home/FaqSection";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
@@ -78,7 +77,6 @@ export default async function HomePage() {
       />
       <FeaturedPortfolio items={portfolio} />
       <PackagesSection packages={packages} />
-      <BookingProcess />
       <TestimonialsSection testimonials={testimonials} />
       <FaqSection faqs={faqs} />
       <Footer settings={settings} />
