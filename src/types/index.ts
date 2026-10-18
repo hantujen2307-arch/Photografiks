@@ -77,6 +77,8 @@ export interface SiteSettings {
   id?: string;
   hero_headline: string;
   hero_subheadline: string;
+  hero_image_url?: string;
+  hero_secondary_image_url?: string;
   studio_name: string;
   studio_tagline: string;
   studio_address: string;

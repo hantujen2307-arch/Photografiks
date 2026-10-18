@@ -3,15 +3,34 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Sparkles, Award, Star } from "lucide-react";
 
+const DEFAULT_HERO_IMAGE =
+  "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85";
+const DEFAULT_SECONDARY_IMAGE =
+  "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=600&q=80";
+
 interface HeroSectionProps {
   headline?: string;
   subheadline?: string;
+  imageUrl?: string;
+  secondaryImageUrl?: string;
 }
 
 export default function HeroSection({
   headline = "Every Moment Deserves to Be Remembered.",
   subheadline = "Studio fotografi editorial & portrait di Jakarta. Menghadirkan karya visual yang intim, abadi, dan bercerita tentang jati diri Anda.",
+  imageUrl,
+  secondaryImageUrl,
 }: HeroSectionProps) {
+  const mainPhoto = imageUrl && imageUrl.trim().length > 0 ? imageUrl.trim() : DEFAULT_HERO_IMAGE;
+  const secondaryPhoto =
+    secondaryImageUrl && secondaryImageUrl.trim().length > 0
+      ? secondaryImageUrl.trim()
+      : DEFAULT_SECONDARY_IMAGE;
+
+  const isMainCustomHost =
+    !mainPhoto.includes("unsplash.com") && !mainPhoto.includes("supabase.co");
+  const isSecondaryCustomHost =
+    !secondaryPhoto.includes("unsplash.com") && !secondaryPhoto.includes("supabase.co");
   return (
     <section id="home" className="relative overflow-hidden pt-4 pb-12 sm:pt-10 sm:pb-24 lg:pt-12 lg:pb-32">
       {/* Decorative background aura */}
@@ -95,10 +114,11 @@ export default function HeroSection({
               {/* Primary Main Image */}
               <div className="relative aspect-[4/5] sm:aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white">
                 <Image
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85"
+                  src={mainPhoto}
                   alt="MOMEN.POTRAIT Editorial Model"
                   fill
                   priority
+                  unoptimized={isMainCustomHost}
                   className="object-cover object-center scale-[1.02] hover:scale-105 transition-transform duration-700 ease-out"
                   sizes="(max-width: 768px) 100vw, 500px"
                 />
@@ -117,9 +137,10 @@ export default function HeroSection({
               {/* Floating Overlap Thumbnail */}
               <div className="hidden sm:block absolute -bottom-8 -left-10 w-44 aspect-[4/5] rounded-xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <Image
-                  src="https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=600&q=80"
+                  src={secondaryPhoto}
                   alt="Couple Moment"
                   fill
+                  unoptimized={isSecondaryCustomHost}
                   className="object-cover object-center"
                   sizes="180px"
                 />

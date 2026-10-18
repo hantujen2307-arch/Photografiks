@@ -3,6 +3,8 @@ import { PackageItem, PortfolioItem, TestimonialItem, FaqItem, SiteSettings, Bus
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   hero_headline: "Every Moment Deserves to Be Remembered.",
   hero_subheadline: "Studio fotografi editorial & portrait di Jakarta. Menghadirkan karya visual yang intim, abadi, dan bercerita tentang jati diri Anda.",
+  hero_image_url: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85",
+  hero_secondary_image_url: "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=600&q=80",
   studio_name: "MOMEN.POTRAIT",
   studio_tagline: "Editorial & Timeless Portrait Studio",
   studio_address: "Jl. Senopati No. 42, Kebayoran Baru, Jakarta Selatan 12190",

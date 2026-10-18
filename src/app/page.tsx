@@ -61,7 +61,15 @@ export default async function HomePage() {
         const mergedSettings = { ...DEFAULT_SITE_SETTINGS };
         settingsRes.data.forEach((row: { key: string; value: unknown }) => {
           if (row.key in mergedSettings) {
-            (mergedSettings as Record<string, unknown>)[row.key] = row.value;
+            let val = row.value;
+            if (typeof val === "string" && val.startsWith('"') && val.endsWith('"')) {
+              try {
+                val = JSON.parse(val);
+              } catch {
+                // keep as string
+              }
+            }
+            (mergedSettings as Record<string, unknown>)[row.key] = val;
           }
         });
         settings = mergedSettings;
@@ -77,6 +85,8 @@ export default async function HomePage() {
       <HeroSection
         headline={settings.hero_headline}
         subheadline={settings.hero_subheadline}
+        imageUrl={settings.hero_image_url}
+        secondaryImageUrl={settings.hero_secondary_image_url}
       />
       <FeaturedPortfolio items={portfolio} />
       <PackagesSection packages={packages} />

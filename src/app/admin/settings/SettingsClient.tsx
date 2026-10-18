@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   Save,
   CheckCircle2,
@@ -11,6 +12,8 @@ import {
   KeyRound,
   AlertCircle,
   Info,
+  Upload,
+  Image as ImageIcon,
 } from "lucide-react";
 import { SiteSettings, TestimonialItem, FaqItem } from "@/types";
 import { DEFAULT_SITE_SETTINGS, DEFAULT_TESTIMONIALS, DEFAULT_FAQS } from "@/lib/constants";
@@ -27,6 +30,12 @@ export default function SettingsClient() {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Hero Images States for visual editing
+  const [heroImageFile, setHeroImageFile] = useState<File | null>(null);
+  const [heroImagePreview, setHeroImagePreview] = useState<string | null>(null);
+  const [heroSecondaryFile, setHeroSecondaryFile] = useState<File | null>(null);
+  const [heroSecondaryPreview, setHeroSecondaryPreview] = useState<string | null>(null);
 
   // Security / Password Change States
   const [newPassword, setNewPassword] = useState("");
@@ -56,6 +65,38 @@ export default function SettingsClient() {
     fetchSettings();
   }, []);
 
+  const handleHeroImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("File harus berformat gambar (JPG, PNG, WebP).");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert("Ukuran file maksimal 10MB.");
+        return;
+      }
+      setHeroImageFile(file);
+      setHeroImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleHeroSecondaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith("image/")) {
+        alert("File harus berformat gambar (JPG, PNG, WebP).");
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        alert("Ukuran file maksimal 10MB.");
+        return;
+      }
+      setHeroSecondaryFile(file);
+      setHeroSecondaryPreview(URL.createObjectURL(file));
+    }
+  };
+
   const handleSaveGeneral = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -63,14 +104,41 @@ export default function SettingsClient() {
     setErrorMessage(null);
 
     try {
-      const res = await fetch("/api/admin/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ section: "general", settings }),
-      });
-      if (!res.ok) throw new Error("Gagal menyimpan pengaturan.");
+      let res: Response;
+      if (heroImageFile || heroSecondaryFile) {
+        const formData = new FormData();
+        formData.append("section", "general");
+        formData.append("settings", JSON.stringify(settings));
+        if (heroImageFile) formData.append("hero_image_file", heroImageFile);
+        if (heroSecondaryFile) formData.append("hero_secondary_image_file", heroSecondaryFile);
+
+        res = await fetch("/api/admin/settings", {
+          method: "PUT",
+          body: formData,
+        });
+      } else {
+        res = await fetch("/api/admin/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ section: "general", settings }),
+        });
+      }
+
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal menyimpan pengaturan.");
+      }
+
+      if (data.settings) {
+        setSettings((prev) => ({ ...prev, ...data.settings }));
+      }
+      setHeroImageFile(null);
+      setHeroImagePreview(null);
+      setHeroSecondaryFile(null);
+      setHeroSecondaryPreview(null);
+
       setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
+      setTimeout(() => setSaveSuccess(false), 4000);
     } catch (err: unknown) {
       setErrorMessage(err instanceof Error ? err.message : "Terjadi kesalahan.");
     } finally {
@@ -197,7 +265,7 @@ export default function SettingsClient() {
       {/* Top Tabs */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2 border-b border-[#E8E1D5]">
         {[
-          { key: "general", label: "Homepage & Headline" },
+          { key: "general", label: "Beranda, Foto Hero & Headline" },
           { key: "contact", label: "Kontak & Media Sosial" },
           { key: "testimonials", label: "Testimoni Klien" },
           { key: "faqs", label: "Tanya Jawab (FAQ)" },
@@ -220,13 +288,20 @@ export default function SettingsClient() {
       {saveSuccess && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center gap-2 animate-in fade-in duration-200">
           <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>Perubahan konten berhasil disimpan ke database studio.</span>
+          <span>Perubahan konten &amp; foto hero berhasil disimpan ke database studio.</span>
+        </div>
+      )}
+
+      {errorMessage && (
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-center gap-2 animate-in fade-in duration-200">
+          <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+          <span>{errorMessage}</span>
         </div>
       )}
 
       {/* TAB 1: General & Headline */}
       {activeTab === "general" && (
-        <form onSubmit={handleSaveGeneral} className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-8 shadow-xs space-y-6">
+        <form onSubmit={handleSaveGeneral} className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-8 shadow-xs space-y-8">
           <div className="border-b border-[#F4EFE6] pb-4">
             <h3 className="font-serif text-xl font-normal text-[#161514]">
               Headline &amp; Teks Hero Homepage
@@ -236,40 +311,287 @@ export default function SettingsClient() {
             </p>
           </div>
 
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
-              Headline Utama (Hero Title)
-            </label>
-            <input
-              type="text"
-              required
-              value={settings.hero_headline}
-              onChange={(e) => setSettings({ ...settings, hero_headline: e.target.value })}
-              className="w-full px-4 py-3 rounded-xl border border-[#E8E1D5] text-sm bg-[#FCFAF6] font-serif focus:outline-hidden focus:border-[#161514]"
-            />
+          <div className="space-y-4">
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
+                Headline Utama (Hero Title)
+              </label>
+              <input
+                type="text"
+                required
+                value={settings.hero_headline}
+                onChange={(e) => setSettings({ ...settings, hero_headline: e.target.value })}
+                className="w-full px-4 py-3 rounded-xl border border-[#E8E1D5] text-sm bg-[#FCFAF6] font-serif focus:outline-hidden focus:border-[#161514]"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
+                Deskripsi Singkat (Hero Subheadline)
+              </label>
+              <textarea
+                rows={3}
+                required
+                value={settings.hero_subheadline}
+                onChange={(e) => setSettings({ ...settings, hero_subheadline: e.target.value })}
+                className="w-full p-4 rounded-xl border border-[#E8E1D5] text-sm bg-[#FCFAF6] focus:outline-hidden focus:border-[#161514]"
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
-              Deskripsi Singkat (Hero Subheadline)
-            </label>
-            <textarea
-              rows={3}
-              required
-              value={settings.hero_subheadline}
-              onChange={(e) => setSettings({ ...settings, hero_subheadline: e.target.value })}
-              className="w-full p-4 rounded-xl border border-[#E8E1D5] text-sm bg-[#FCFAF6] focus:outline-hidden focus:border-[#161514]"
-            />
+          {/* Section: Foto Visual Hero */}
+          <div className="pt-6 border-t border-[#F4EFE6] space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+              <div>
+                <div className="flex items-center gap-2">
+                  <ImageIcon className="w-5 h-5 text-[#846F54]" />
+                  <h4 className="font-serif text-xl font-normal text-[#161514]">
+                    Foto Visual Hero (Halaman Utama)
+                  </h4>
+                </div>
+                <p className="text-xs text-[#6B6862] font-light mt-1">
+                  Ubah kedua foto awalan pada tampilan beranda website: Foto Utama Portrait dan Foto Kartu Melayang.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Card 1: Foto Utama Hero (Signature Portrait) */}
+              <div className="p-5 rounded-2xl bg-[#FCFAF6] border border-[#E8E1D5] flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs uppercase tracking-wider font-semibold text-[#161514]">
+                      1. Foto Utama Hero (Signature Portrait)
+                    </span>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE3D4] text-[#6B6862]">
+                      Rasio 4:5
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#6B6862] mb-4">
+                    Foto portrait berukuran besar di sebelah kanan headline.
+                  </p>
+
+                  {/* Visual Preview */}
+                  <div className="relative aspect-[4/5] w-full max-w-[260px] mx-auto rounded-2xl overflow-hidden shadow-lg border-4 border-white bg-[#EFECE6] mb-4">
+                    <Image
+                      src={
+                        heroImagePreview ||
+                        settings.hero_image_url ||
+                        DEFAULT_SITE_SETTINGS.hero_image_url ||
+                        "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85"
+                      }
+                      alt="Preview Foto Utama Hero"
+                      fill
+                      unoptimized
+                      className="object-cover object-center"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+                    <div className="absolute bottom-3 left-3 right-3 text-white pointer-events-none">
+                      <span className="text-[8px] tracking-[0.2em] uppercase font-semibold text-[#DFC9A8] block">
+                        Signature Portrait
+                      </span>
+                      <span className="font-serif text-xs line-clamp-1">
+                        Natural Light &amp; Editorial Intimacy
+                      </span>
+                    </div>
+                    {heroImageFile && (
+                      <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold shadow-md">
+                        Foto Baru Terpilih
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-2 border-t border-[#E8E1D5]/60">
+                  {/* File Upload Trigger */}
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-wider text-[#4B4944] font-semibold mb-1.5">
+                      Ganti Foto (Upload File)
+                    </label>
+                    <label className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-[#B8976C] bg-white hover:bg-[#F4EFE6] cursor-pointer text-xs font-medium text-[#161514] transition-colors shadow-xs">
+                      <Upload className="w-4 h-4 text-[#846F54]" />
+                      <span>{heroImageFile ? "Ganti File Dipilih" : "Pilih Foto dari Perangkat"}</span>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleHeroImageChange}
+                      />
+                    </label>
+                    {heroImageFile && (
+                      <div className="flex items-center justify-between text-[11px] text-[#6B6862] mt-1.5 px-1 bg-white p-1.5 rounded-lg border border-[#E8E1D5]">
+                        <span className="truncate max-w-[180px] font-mono text-[10px]">{heroImageFile.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setHeroImageFile(null);
+                            setHeroImagePreview(null);
+                          }}
+                          className="text-red-500 hover:underline cursor-pointer text-[10px] font-semibold"
+                        >
+                          Hapus Pilihan
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* URL Input */}
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-wider text-[#4B4944] font-semibold mb-1">
+                      Atau URL Foto Langsung
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.hero_image_url || ""}
+                      onChange={(e) => {
+                        setHeroImagePreview(null);
+                        setHeroImageFile(null);
+                        setSettings({ ...settings, hero_image_url: e.target.value });
+                      }}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full px-3 py-2 rounded-xl border border-[#E8E1D5] text-xs bg-white focus:outline-hidden focus:border-[#161514]"
+                    />
+                  </div>
+
+                  {settings.hero_image_url && settings.hero_image_url !== DEFAULT_SITE_SETTINGS.hero_image_url && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setHeroImageFile(null);
+                        setHeroImagePreview(null);
+                        setSettings({
+                          ...settings,
+                          hero_image_url: DEFAULT_SITE_SETTINGS.hero_image_url,
+                        });
+                      }}
+                      className="text-[11px] text-[#9A8973] hover:text-[#161514] underline text-left block cursor-pointer"
+                    >
+                      Kembalikan ke Foto Default Studio
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Card 2: Foto Kartu Melayang (Couple Story) */}
+              <div className="p-5 rounded-2xl bg-[#FCFAF6] border border-[#E8E1D5] flex flex-col justify-between space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs uppercase tracking-wider font-semibold text-[#161514]">
+                      2. Foto Kartu Melayang (Couple Story)
+                    </span>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE3D4] text-[#6B6862]">
+                      Rasio 4:5
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-[#6B6862] mb-4">
+                    Foto thumbnail melayang di sudut kiri bawah foto utama beranda.
+                  </p>
+
+                  {/* Visual Preview */}
+                  <div className="relative aspect-[4/5] w-full max-w-[200px] mx-auto rounded-2xl overflow-hidden shadow-lg border-4 border-white bg-[#EFECE6] mb-4">
+                    <Image
+                      src={
+                        heroSecondaryPreview ||
+                        settings.hero_secondary_image_url ||
+                        DEFAULT_SITE_SETTINGS.hero_secondary_image_url ||
+                        "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=600&q=80"
+                      }
+                      alt="Preview Foto Kartu Melayang"
+                      fill
+                      unoptimized
+                      className="object-cover object-center"
+                    />
+                    <div className="absolute bottom-2 left-2 right-2 bg-black/60 backdrop-blur-xs py-1 px-2 rounded text-[9px] text-white tracking-widest uppercase text-center font-sans pointer-events-none">
+                      Couple Story
+                    </div>
+                    {heroSecondaryFile && (
+                      <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold shadow-md">
+                        Foto Baru Terpilih
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3 pt-2 border-t border-[#E8E1D5]/60">
+                  {/* File Upload Trigger */}
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-wider text-[#4B4944] font-semibold mb-1.5">
+                      Ganti Foto (Upload File)
+                    </label>
+                    <label className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-[#B8976C] bg-white hover:bg-[#F4EFE6] cursor-pointer text-xs font-medium text-[#161514] transition-colors shadow-xs">
+                      <Upload className="w-4 h-4 text-[#846F54]" />
+                      <span>{heroSecondaryFile ? "Ganti File Dipilih" : "Pilih Foto dari Perangkat"}</span>
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        className="hidden"
+                        onChange={handleHeroSecondaryChange}
+                      />
+                    </label>
+                    {heroSecondaryFile && (
+                      <div className="flex items-center justify-between text-[11px] text-[#6B6862] mt-1.5 px-1 bg-white p-1.5 rounded-lg border border-[#E8E1D5]">
+                        <span className="truncate max-w-[180px] font-mono text-[10px]">{heroSecondaryFile.name}</span>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setHeroSecondaryFile(null);
+                            setHeroSecondaryPreview(null);
+                          }}
+                          className="text-red-500 hover:underline cursor-pointer text-[10px] font-semibold"
+                        >
+                          Hapus Pilihan
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* URL Input */}
+                  <div>
+                    <label className="block text-[11px] uppercase tracking-wider text-[#4B4944] font-semibold mb-1">
+                      Atau URL Foto Langsung
+                    </label>
+                    <input
+                      type="url"
+                      value={settings.hero_secondary_image_url || ""}
+                      onChange={(e) => {
+                        setHeroSecondaryPreview(null);
+                        setHeroSecondaryFile(null);
+                        setSettings({ ...settings, hero_secondary_image_url: e.target.value });
+                      }}
+                      placeholder="https://images.unsplash.com/..."
+                      className="w-full px-3 py-2 rounded-xl border border-[#E8E1D5] text-xs bg-white focus:outline-hidden focus:border-[#161514]"
+                    />
+                  </div>
+
+                  {settings.hero_secondary_image_url && settings.hero_secondary_image_url !== DEFAULT_SITE_SETTINGS.hero_secondary_image_url && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setHeroSecondaryFile(null);
+                        setHeroSecondaryPreview(null);
+                        setSettings({
+                          ...settings,
+                          hero_secondary_image_url: DEFAULT_SITE_SETTINGS.hero_secondary_image_url,
+                        });
+                      }}
+                      className="text-[11px] text-[#9A8973] hover:text-[#161514] underline text-left block cursor-pointer"
+                    >
+                      Kembalikan ke Foto Default Studio
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="pt-4 border-t border-[#F4EFE6] flex justify-end">
             <button
               type="submit"
               disabled={saving}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#161514] text-white text-xs uppercase tracking-wider font-semibold hover:bg-[#2A2926] disabled:opacity-50 transition-all shadow-md"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#161514] text-white text-xs uppercase tracking-wider font-semibold hover:bg-[#2A2926] disabled:opacity-50 transition-all shadow-md cursor-pointer"
             >
               <Save className="w-4 h-4" />
-              <span>{saving ? "Menyimpan..." : "Simpan Perubahan"}</span>
+              <span>{saving ? "Menyimpan & Mengunggah Foto..." : "Simpan Perubahan & Foto Hero"}</span>
             </button>
           </div>
         </form>
