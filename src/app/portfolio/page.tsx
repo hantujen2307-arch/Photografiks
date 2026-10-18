@@ -2,7 +2,7 @@ import React from "react";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import FeaturedPortfolio from "@/components/home/FeaturedPortfolio";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
 import { DEFAULT_PORTFOLIO, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
@@ -13,17 +13,25 @@ export const metadata = {
     "Eksplorasi dokumentasi karya editorial, portrait, wisuda, couple, dan keluarga oleh MOMEN.POTRAIT Studio Jakarta.",
 };
 
+export const revalidate = 60;
+
 export default async function PortfolioPage() {
   let portfolio = DEFAULT_PORTFOLIO;
   const settings = DEFAULT_SITE_SETTINGS;
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabase();
     if (supabase) {
-      const { data } = await supabase
+      const fetchPortfolio = supabase
         .from("portfolio_items")
         .select("*")
         .order("sort_order", { ascending: true });
+
+      const { data } = await withTimeout(
+        fetchPortfolio as any,
+        { data: DEFAULT_PORTFOLIO },
+        1500
+      );
 
       if (data && data.length > 0) {
         portfolio = data;

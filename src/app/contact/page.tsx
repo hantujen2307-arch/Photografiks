@@ -1,7 +1,7 @@
 import React from "react";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
 import { DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import { createWhatsAppUrl } from "@/lib/utils";
 import {
@@ -20,16 +20,24 @@ export const metadata = {
     "Hubungi MOMEN.POTRAIT Studio Jakarta. Konsultasi konsep pemotretan, pertanyaan jadwal, atau kunjungan studio.",
 };
 
+export const revalidate = 60;
+
 export default async function ContactPage() {
   let settings = DEFAULT_SITE_SETTINGS;
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabase();
     if (supabase) {
-      const { data } = await supabase.from("site_settings").select("key, value");
+      const fetchSettings = supabase.from("site_settings").select("key, value");
+      const { data } = await withTimeout(
+        fetchSettings as any,
+        { data: [] },
+        1500
+      );
+
       if (data && data.length > 0) {
         const merged = { ...DEFAULT_SITE_SETTINGS };
-        data.forEach((row) => {
+        data.forEach((row: { key: string; value: unknown }) => {
           if (row.key in merged) {
             (merged as Record<string, unknown>)[row.key] = row.value;
           }

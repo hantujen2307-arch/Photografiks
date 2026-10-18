@@ -6,7 +6,7 @@ import FeaturedPortfolio from "@/components/home/FeaturedPortfolio";
 import PackagesSection from "@/components/home/PackagesSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FaqSection from "@/components/home/FaqSection";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
 import {
   DEFAULT_PACKAGES,
   DEFAULT_PORTFOLIO,
@@ -14,6 +14,9 @@ import {
   DEFAULT_FAQS,
   DEFAULT_SITE_SETTINGS,
 } from "@/lib/constants";
+
+// Enable Edge CDN caching with Incremental Static Regeneration (ISR)
+export const revalidate = 60;
 
 export default async function HomePage() {
   let packages = DEFAULT_PACKAGES;
@@ -23,9 +26,9 @@ export default async function HomePage() {
   let settings = DEFAULT_SITE_SETTINGS;
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabase();
     if (supabase) {
-      const [pkgRes, portRes, testRes, faqRes, settingsRes] = await Promise.all([
+      const fetchAllData = Promise.all([
         supabase
           .from("packages")
           .select("*")
@@ -45,18 +48,28 @@ export default async function HomePage() {
           .select("*")
           .eq("is_active", true)
           .order("sort_order", { ascending: true }),
-        supabase
-          .from("site_settings")
-          .select("key, value"),
+        supabase.from("site_settings").select("key, value"),
       ]);
 
-      if (pkgRes.data && pkgRes.data.length > 0) packages = pkgRes.data;
-      if (portRes.data && portRes.data.length > 0) portfolio = portRes.data;
-      if (testRes.data && testRes.data.length > 0) testimonials = testRes.data;
-      if (faqRes.data && faqRes.data.length > 0) faqs = faqRes.data;
-      if (settingsRes.data && settingsRes.data.length > 0) {
+      const [pkgRes, portRes, testRes, faqRes, settingsRes] = await withTimeout(
+        fetchAllData,
+        [
+          { data: DEFAULT_PACKAGES },
+          { data: DEFAULT_PORTFOLIO },
+          { data: DEFAULT_TESTIMONIALS },
+          { data: DEFAULT_FAQS },
+          { data: [] },
+        ] as any,
+        1500
+      );
+
+      if (pkgRes?.data && pkgRes.data.length > 0) packages = pkgRes.data;
+      if (portRes?.data && portRes.data.length > 0) portfolio = portRes.data;
+      if (testRes?.data && testRes.data.length > 0) testimonials = testRes.data;
+      if (faqRes?.data && faqRes.data.length > 0) faqs = faqRes.data;
+      if (settingsRes?.data && settingsRes.data.length > 0) {
         const mergedSettings = { ...DEFAULT_SITE_SETTINGS };
-        settingsRes.data.forEach((row) => {
+        settingsRes.data.forEach((row: { key: string; value: unknown }) => {
           if (row.key in mergedSettings) {
             (mergedSettings as Record<string, unknown>)[row.key] = row.value;
           }

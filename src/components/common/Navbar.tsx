@@ -32,6 +32,18 @@ export default function Navbar() {
     setMobileMenuOpen(false);
   }, [pathname]);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <>
       <header
@@ -47,7 +59,8 @@ export default function Navbar() {
             {/* Brand Logo */}
             <NextLink
               href="/"
-              className="group flex items-center gap-2.5 transition-transform hover:opacity-90"
+              onClick={() => setMobileMenuOpen(false)}
+              className="group flex items-center gap-2.5 transition-transform hover:opacity-90 min-h-[44px]"
               aria-label="MOMEN.POTRAIT Home"
             >
               <div className="w-8 h-8 rounded-full bg-[#161514] flex items-center justify-center text-[#FCFAF6] transition-transform group-hover:scale-105">
@@ -112,7 +125,7 @@ export default function Navbar() {
                 href="https://wa.me/6285157335443?text=Halo%20MOMEN.POTRAIT%2C%20saya%20ingin%20konsultasi%20sesi%20foto"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-8 h-8 rounded-full bg-[#EBF7EE] text-[#25D366] border border-[#C3E6CB] flex items-center justify-center active:scale-95 transition-all shadow-2xs"
+                className="w-9 h-9 rounded-full bg-[#EBF7EE] text-[#25D366] border border-[#C3E6CB] flex items-center justify-center active:scale-95 transition-all shadow-2xs"
                 aria-label="Chat WhatsApp Studio"
               >
                 <span className="sr-only">WhatsApp</span>
@@ -123,8 +136,8 @@ export default function Navbar() {
 
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 text-[#161514] hover:bg-[#F4EFE6] rounded-xl transition-colors active:scale-95"
-                aria-label="Toggle menu"
+                className="p-2.5 text-[#161514] hover:bg-[#F4EFE6] rounded-xl transition-colors active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                aria-label={mobileMenuOpen ? "Tutup menu" : "Buka menu"}
               >
                 {mobileMenuOpen ? (
                   <X className="w-5 h-5" />
@@ -137,27 +150,49 @@ export default function Navbar() {
         </div>
       </header>
 
-      {/* Mobile Drawer */}
+      {/* Mobile Drawer (z-[60] to cleanly overlay all elements including bottom nav) */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden bg-[#FCFAF6] flex flex-col pt-24 px-6 pb-8 animate-in fade-in duration-200">
-          <div className="flex flex-col gap-5 divide-y divide-[#E8E1D5]/60">
-            <div className="flex flex-col gap-3">
+        <div className="fixed inset-0 z-[60] md:hidden bg-[#FCFAF6] flex flex-col pt-6 px-6 pb-12 overflow-y-auto animate-in fade-in duration-200">
+          {/* Header inside drawer with close button */}
+          <div className="flex items-center justify-between pb-5 border-b border-[#E8E1D5]">
+            <div className="flex items-center gap-2.5">
+              <div className="w-8 h-8 rounded-full bg-[#161514] flex items-center justify-center text-[#FCFAF6]">
+                <Camera className="w-4 h-4 stroke-[1.75]" />
+              </div>
+              <span className="font-serif text-base tracking-[0.2em] font-medium text-[#161514] uppercase">
+                MOMEN<span className="text-[#9A8973]">.</span>POTRAIT
+              </span>
+            </div>
+            <button
+              onClick={() => setMobileMenuOpen(false)}
+              className="p-2.5 text-[#161514] bg-[#F4EFE6] hover:bg-[#E8E1D5] rounded-full transition-colors active:scale-95 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              aria-label="Tutup Menu"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+
+          <div className="flex flex-col gap-5 divide-y divide-[#E8E1D5]/60 mt-4">
+            <div className="flex flex-col gap-1.5">
               {NAV_LINKS.map((link) => {
                 const isActive = pathname === link.href;
                 return (
                   <NextLink
                     key={link.href}
                     href={link.href}
+                    onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "text-lg font-serif tracking-wider py-2 transition-colors flex items-center justify-between",
+                      "text-lg font-serif tracking-wider py-3 px-3 rounded-xl transition-colors flex items-center justify-between min-h-[48px] active:scale-98",
                       isActive
-                        ? "text-[#161514] font-semibold"
+                        ? "text-[#161514] font-semibold bg-[#F4EFE6]"
                         : "text-[#6B6862] hover:text-[#161514]"
                     )}
                   >
                     <span>{link.label}</span>
-                    {isActive && (
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#161514]" />
+                    {isActive ? (
+                      <span className="w-2 h-2 rounded-full bg-[#161514]" />
+                    ) : (
+                      <ArrowRight className="w-4 h-4 text-[#C9BBA7]" />
                     )}
                   </NextLink>
                 );
@@ -167,7 +202,8 @@ export default function Navbar() {
             <div className="pt-6 flex flex-col gap-3">
               <NextLink
                 href="/booking/status"
-                className="flex items-center justify-center gap-2 py-3 text-sm font-medium tracking-wider text-[#6B6862] bg-[#F4EFE6] rounded-xl hover:bg-[#E8E1D5] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 py-3.5 text-sm font-medium tracking-wider text-[#6B6862] bg-[#F4EFE6] rounded-xl hover:bg-[#E8E1D5] transition-colors min-h-[48px] active:scale-98"
               >
                 <Clock className="w-4 h-4 text-[#9A8973]" />
                 <span>Cek Status Reservasi</span>
@@ -175,7 +211,8 @@ export default function Navbar() {
 
               <NextLink
                 href="/booking"
-                className="flex items-center justify-center gap-2 py-3.5 text-sm font-medium tracking-wider text-[#FCFAF6] bg-[#161514] rounded-xl hover:bg-[#232220] transition-colors shadow-sm"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-2 py-4 text-sm font-medium tracking-wider text-[#FCFAF6] bg-[#161514] rounded-xl hover:bg-[#232220] transition-colors shadow-md min-h-[48px] active:scale-98"
               >
                 <span>Book Your Session</span>
                 <ArrowRight className="w-4 h-4" />
@@ -183,7 +220,8 @@ export default function Navbar() {
 
               <NextLink
                 href="/admin"
-                className="flex items-center justify-center gap-1.5 pt-3 text-xs tracking-wider text-[#9A8973] hover:text-[#161514] transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center justify-center gap-1.5 pt-3 text-xs tracking-wider text-[#9A8973] hover:text-[#161514] transition-colors min-h-[44px]"
               >
                 <ShieldCheck className="w-3.5 h-3.5" />
                 <span>Portal Studio Admin</span>

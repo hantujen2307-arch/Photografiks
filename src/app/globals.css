@@ -96,6 +96,13 @@ body {
   html, body {
     overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    scroll-padding-top: 6rem;
+  }
+
+  /* Prevent 300ms mobile touch delay on interactive elements */
+  a, button, [role="button"], input, select, textarea {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
   }
 }
 

@@ -13,7 +13,7 @@ export default function HeroSection({
   subheadline = "Studio fotografi editorial & portrait di Jakarta. Menghadirkan karya visual yang intim, abadi, dan bercerita tentang jati diri Anda.",
 }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden pt-4 pb-12 sm:pt-10 sm:pb-24 lg:pt-12 lg:pb-32">
+    <section id="home" className="relative overflow-hidden pt-4 pb-12 sm:pt-10 sm:pb-24 lg:pt-12 lg:pb-32">
       {/* Decorative background aura */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#EAE3D4]/50 rounded-full blur-[140px] -z-10 pointer-events-none" />
 

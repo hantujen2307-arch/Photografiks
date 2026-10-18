@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicSupabase } from "@/lib/supabase/public";
 import { DEFAULT_PACKAGES, DEFAULT_BUSINESS_HOURS } from "@/lib/constants";
 import { timeToMinutes, minutesToTime } from "@/lib/utils";
 
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
       durationMinutes = fallbackPkg.duration_minutes;
     }
 
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabase();
 
     let openTime = "09:00:00";
     let closeTime = "19:00:00";
@@ -47,9 +47,10 @@ export async function GET(request: NextRequest) {
     let isDateBlocked = false;
 
     if (supabase) {
+      const sb = supabase as any;
       // Fetch actual package duration from DB
       if (packageId) {
-        const { data: pkgData } = await supabase
+        const { data: pkgData } = await sb
           .from("packages")
           .select("duration_minutes")
           .eq("id", packageId)
@@ -60,7 +61,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Check business hours
-      const { data: bhData } = await supabase
+      const { data: bhData } = await sb
         .from("business_hours")
         .select("*")
         .eq("day_of_week", dayOfWeek)
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
       }
 
       // Check blocked dates
-      const { data: blockedDateData } = await supabase
+      const { data: blockedDateData } = await sb
         .from("blocked_dates")
         .select("id")
         .eq("blocked_date", date)
@@ -83,13 +84,13 @@ export async function GET(request: NextRequest) {
       }
 
       // Fetch blocked slots
-      const { data: blockedSlotData } = await supabase
+      const { data: blockedSlotData } = await sb
         .from("blocked_slots")
         .select("start_time, end_time")
         .eq("slot_date", date);
 
       if (blockedSlotData) {
-        blockedSlotData.forEach((s) => {
+        blockedSlotData.forEach((s: any) => {
           bookedRanges.push({
             start: timeToMinutes(s.start_time),
             end: timeToMinutes(s.end_time),
@@ -98,14 +99,14 @@ export async function GET(request: NextRequest) {
       }
 
       // Fetch active bookings (pending & confirmed)
-      const { data: bookingsData } = await supabase
+      const { data: bookingsData } = await sb
         .from("bookings")
         .select("start_time, end_time")
         .eq("session_date", date)
         .in("status", ["pending", "confirmed"]);
 
       if (bookingsData) {
-        bookingsData.forEach((b) => {
+        bookingsData.forEach((b: any) => {
           bookedRanges.push({
             start: timeToMinutes(b.start_time),
             end: timeToMinutes(b.end_time),

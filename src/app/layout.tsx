@@ -52,9 +52,9 @@ export default function RootLayout({
   return (
     <html
       lang="id"
-      className={`${playfair.variable} ${jakarta.variable} scroll-smooth`}
+      className={`${playfair.variable} ${jakarta.variable} scroll-smooth scroll-pt-24`}
     >
-      <body className="min-h-screen flex flex-col bg-[#FCFAF6] text-[#161514] selection:bg-[#161514] selection:text-[#FCFAF6] pb-16 md:pb-0 antialiased overflow-x-hidden">
+      <body className="min-h-screen flex flex-col bg-[#FCFAF6] text-[#161514] selection:bg-[#161514] selection:text-[#FCFAF6] pb-28 md:pb-0 antialiased overflow-x-hidden">
         {children}
         <MobileBottomNav />
       </body>

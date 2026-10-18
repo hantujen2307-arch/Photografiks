@@ -17,7 +17,9 @@ export default function PackagesSection({
     .sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <section className="py-12 sm:py-20 lg:py-32 bg-[#FCFAF6]" id="packages">
+    <section className="relative py-12 sm:py-20 lg:py-32 bg-[#FCFAF6]" id="packages">
+      {/* Anchor alias for Indonesian url #paket */}
+      <span id="paket" className="absolute -top-24 left-0 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Pricing &amp; Experiences"

@@ -2,7 +2,7 @@ import React, { Suspense } from "react";
 import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import BookingWizard from "@/components/booking/BookingWizard";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
 import { DEFAULT_PACKAGES, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import { Sparkles, Loader2 } from "lucide-react";
 
@@ -12,14 +12,16 @@ export const metadata = {
     "Pilih paket fotografi dan amankan slot jadwal foto studio Anda di MOMEN.POTRAIT Jakarta.",
 };
 
+export const revalidate = 60;
+
 export default async function BookingPage() {
   let packages = DEFAULT_PACKAGES;
   let settings = DEFAULT_SITE_SETTINGS;
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabase();
     if (supabase) {
-      const [pkgRes, settingsRes] = await Promise.all([
+      const fetchPackagesAndSettings = Promise.all([
         supabase
           .from("packages")
           .select("*")
@@ -28,10 +30,16 @@ export default async function BookingPage() {
         supabase.from("site_settings").select("key, value"),
       ]);
 
-      if (pkgRes.data && pkgRes.data.length > 0) packages = pkgRes.data;
-      if (settingsRes.data && settingsRes.data.length > 0) {
+      const [pkgRes, settingsRes] = await withTimeout(
+        fetchPackagesAndSettings as any,
+        [{ data: DEFAULT_PACKAGES }, { data: [] }] as any,
+        1500
+      );
+
+      if (pkgRes?.data && pkgRes.data.length > 0) packages = pkgRes.data;
+      if (settingsRes?.data && settingsRes.data.length > 0) {
         const merged = { ...DEFAULT_SITE_SETTINGS };
-        settingsRes.data.forEach((row) => {
+        settingsRes.data.forEach((row: { key: string; value: unknown }) => {
           if (row.key in merged) {
             (merged as Record<string, unknown>)[row.key] = row.value;
           }

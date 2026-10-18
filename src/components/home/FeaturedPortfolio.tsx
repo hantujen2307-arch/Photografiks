@@ -25,7 +25,9 @@ export default function FeaturedPortfolio({
       : items.filter((item) => item.category.toLowerCase() === activeCategory.toLowerCase());
 
   return (
-    <section className="py-12 sm:py-20 lg:py-28 bg-[#F4EFE6]/50 border-y border-[#E8E1D5]">
+    <section id="portfolio" className="relative py-12 sm:py-20 lg:py-28 bg-[#F4EFE6]/50 border-y border-[#E8E1D5]">
+      {/* Anchor alias for Indonesian url #galeri */}
+      <span id="galeri" className="absolute -top-24 left-0 pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Visual Journal"
@@ -110,7 +112,7 @@ export default function FeaturedPortfolio({
       {/* Lightbox Modal */}
       {selectedPhoto && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
+          className="fixed inset-0 z-[70] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 sm:p-8 animate-in fade-in duration-200"
           onClick={() => setSelectedPhoto(null)}
         >
           <div

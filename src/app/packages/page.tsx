@@ -3,7 +3,7 @@ import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import PackagesSection from "@/components/home/PackagesSection";
 import FaqSection from "@/components/home/FaqSection";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
 import { DEFAULT_PACKAGES, DEFAULT_FAQS, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import { Sparkles, Plus, CheckCircle2 } from "lucide-react";
 
@@ -12,6 +12,8 @@ export const metadata = {
   description:
     "Daftar paket fotografi studio dan portraiture eksklusif MOMEN.POTRAIT Jakarta. Transparan, terpercaya, dan tanpa biaya tersembunyi.",
 };
+
+export const revalidate = 60;
 
 const ADD_ONS = [
   {
@@ -42,9 +44,9 @@ export default async function PackagesPage() {
   const settings = DEFAULT_SITE_SETTINGS;
 
   try {
-    const supabase = await createServerSupabaseClient();
+    const supabase = getPublicSupabase();
     if (supabase) {
-      const [pkgRes, faqRes] = await Promise.all([
+      const fetchPackagesAndFaqs = Promise.all([
         supabase
           .from("packages")
           .select("*")
@@ -57,8 +59,14 @@ export default async function PackagesPage() {
           .order("sort_order", { ascending: true }),
       ]);
 
-      if (pkgRes.data && pkgRes.data.length > 0) packages = pkgRes.data;
-      if (faqRes.data && faqRes.data.length > 0) faqs = faqRes.data;
+      const [pkgRes, faqRes] = await withTimeout(
+        fetchPackagesAndFaqs as any,
+        [{ data: DEFAULT_PACKAGES }, { data: DEFAULT_FAQS }] as any,
+        1500
+      );
+
+      if (pkgRes?.data && pkgRes.data.length > 0) packages = pkgRes.data;
+      if (faqRes?.data && faqRes.data.length > 0) faqs = faqRes.data;
     }
   } catch (err) {
     console.error("Error fetching packages page data:", err);
