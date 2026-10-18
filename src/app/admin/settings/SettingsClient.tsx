@@ -159,27 +159,29 @@ export default function SettingsClient() {
     setPasswordLoading(true);
 
     try {
-      const supabase = createClient();
-      if (!supabase) {
-        // Preview mode
-        setPasswordSuccess(
-          "Mode Preview: Simulasi ganti password berhasil! Saat Supabase dihubungkan (.env.local), password baru ini akan langsung aktif di database autentikasi."
-        );
-        setNewPassword("");
-        setConfirmPassword("");
-        return;
-      }
-
-      const { error } = await supabase.auth.updateUser({
-        password: newPassword,
+      const res = await fetch("/api/admin/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ newPassword: newPassword.trim() }),
       });
 
-      if (error) {
-        throw new Error(error.message || "Gagal memperbarui password.");
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "Gagal memperbarui kata sandi.");
+      }
+
+      // Also update Supabase if connected
+      const supabase = createClient();
+      if (supabase) {
+        try {
+          await supabase.auth.updateUser({ password: newPassword.trim() });
+        } catch {
+          // ignore
+        }
       }
 
       setPasswordSuccess(
-        "Password administrator berhasil diperbarui! Silakan gunakan password baru ini untuk login berikutnya."
+        "Kata sandi administrator berhasil diperbarui! Silakan gunakan kata sandi baru ini untuk login berikutnya."
       );
       setNewPassword("");
       setConfirmPassword("");

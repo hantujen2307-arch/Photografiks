@@ -41,6 +41,7 @@ export default function AdminSidebar({
 
   const handleLogout = async () => {
     try {
+      await fetch("/api/admin/auth/logout", { method: "POST" });
       const supabase = createClient();
       if (supabase) {
         await supabase.auth.signOut();

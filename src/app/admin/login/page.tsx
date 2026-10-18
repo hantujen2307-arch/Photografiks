@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState("admin@momenpotrait.com");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,43 +19,37 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError(null);
 
-    const supabase = createClient();
-
-    if (!supabase) {
-      // Local preview without supabase env:
-      // Allow entering the preview admin dashboard
-      router.push("/admin");
-      return;
-    }
-
     try {
-      const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password,
+      const res = await fetch("/api/admin/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: email.trim(),
+          password: password.trim(),
+        }),
       });
 
-      if (authError) {
-        throw new Error(authError.message || "Email atau kata sandi tidak valid.");
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || "Email atau kata sandi tidak valid.");
       }
 
-      if (data.user) {
-        // Check admin_profiles table
-        const { data: profile, error: profileErr } = await supabase
-          .from("admin_profiles")
-          .select("*")
-          .eq("user_id", data.user.id)
-          .single();
-
-        if (profileErr || !profile) {
-          await supabase.auth.signOut();
-          throw new Error(
-            "Akun ini bukan administrator terdaftar di MOMEN.POTRAIT. Hubungi pemilik studio."
-          );
+      // If Supabase client is also active, optionally sign in there too
+      const supabase = createClient();
+      if (supabase) {
+        try {
+          await supabase.auth.signInWithPassword({
+            email: email.trim(),
+            password: password.trim(),
+          });
+        } catch {
+          // ignore if purely local session
         }
-
-        router.push("/admin");
-        router.refresh();
       }
+
+      router.push("/admin");
+      router.refresh();
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);
