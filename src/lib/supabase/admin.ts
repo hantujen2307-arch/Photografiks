@@ -21,9 +21,11 @@ export function createAdminSupabaseClient() {
       fetch: (url, options) => {
         return fetch(url, {
           ...options,
-          // 12 second timeout to prevent hanging requests on Vercel
-          signal: options?.signal || AbortSignal.timeout(12000),
-        });
+          // 45 second timeout for image uploads on Vercel Serverless
+          signal: options?.signal || AbortSignal.timeout(45000),
+          // Ensure duplex mode is specified for request bodies in Node.js 18+ undici
+          duplex: (options as any)?.duplex || ((options as any)?.body ? "half" : undefined),
+        } as any);
       },
     },
   });

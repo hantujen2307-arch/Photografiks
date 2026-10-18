@@ -7,7 +7,7 @@
 export function getSanitizedSupabaseUrl(): string | null {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL;
   if (!raw) return null;
-  const cleaned = raw.trim().replace(/[\r\n\t]/g, "");
+  const cleaned = raw.trim().replace(/^["']|["']$/g, "").replace(/[\r\n\t]/g, "").trim();
   if (!cleaned) return null;
 
   try {
@@ -28,7 +28,7 @@ export function getSanitizedSupabaseUrl(): string | null {
 export function getSanitizedSupabaseAnonKey(): string | null {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
   if (!raw) return null;
-  const cleaned = raw.trim().replace(/[\r\n\t]/g, "");
+  const cleaned = raw.trim().replace(/^["']|["']$/g, "").replace(/[\r\n\t]/g, "").trim();
   if (!cleaned || cleaned.includes("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")) {
     return null;
   }
@@ -38,7 +38,7 @@ export function getSanitizedSupabaseAnonKey(): string | null {
 export function getSanitizedSupabaseServiceRoleKey(): string | null {
   const raw = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!raw) return null;
-  const cleaned = raw.trim().replace(/[\r\n\t]/g, "");
+  const cleaned = raw.trim().replace(/^["']|["']$/g, "").replace(/[\r\n\t]/g, "").trim();
   if (!cleaned || cleaned.includes("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...")) {
     return null;
   }

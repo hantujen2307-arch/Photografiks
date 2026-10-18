@@ -11,6 +11,7 @@ import {
 } from "@/lib/data/packages-store";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 async function getSupabaseClient() {
   const adminClient = createAdminSupabaseClient();
@@ -20,17 +21,23 @@ async function getSupabaseClient() {
 
 /**
  * Upload binary file or base64 Data URL to Supabase Storage bucket 'portfolio'.
+ * Uses createAdminSupabaseClient (service-role) to ensure RLS bypass and bucket administration.
  */
 async function uploadPackageImage(
   supabase: any,
   fileOrDataUrl: File | string
 ): Promise<{ url?: string; error?: string }> {
-  if (!supabase) {
-    return { error: "Supabase client tidak tersedia." };
+  // Always prioritize the admin client with service_role key for Storage writes
+  const storageClient = createAdminSupabaseClient() || supabase;
+  if (!storageClient) {
+    return {
+      error:
+        "Supabase client tidak tersedia. Pastikan SUPABASE_SERVICE_ROLE_KEY atau NEXT_PUBLIC_SUPABASE_URL sudah diatur di Environment Variables Vercel.",
+    };
   }
 
   try {
-    let buffer: Buffer;
+    let fileBody: File | Buffer;
     let ext = "jpg";
     let contentType = "image/jpeg";
 
@@ -42,32 +49,47 @@ async function uploadPackageImage(
       const rawExt = matches[1];
       ext = rawExt.includes("png") ? "png" : rawExt.includes("webp") ? "webp" : "jpg";
       contentType = `image/${ext}`;
-      buffer = Buffer.from(matches[2], "base64");
+      fileBody = Buffer.from(matches[2], "base64");
     } else {
       const fileExt = fileOrDataUrl.name.split(".").pop() || "jpg";
       ext = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
       contentType = fileOrDataUrl.type || `image/${ext}`;
-      const arrayBuffer = await fileOrDataUrl.arrayBuffer();
-      buffer = Buffer.from(arrayBuffer);
+      // Pass the File directly so Supabase Storage can stream it via FormData
+      fileBody = fileOrDataUrl;
     }
 
+    // 1. Proactively ensure bucket 'portfolio' exists in Supabase Storage
+    try {
+      const { data: bucketData, error: bucketCheckError } = await storageClient.storage.getBucket("portfolio");
+      if (bucketCheckError || !bucketData) {
+        await storageClient.storage.createBucket("portfolio", {
+          public: true,
+          fileSizeLimit: 10485760, // 10MB
+          allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+        });
+      }
+    } catch (bucketInitErr) {
+      console.warn("[BUCKET_INIT_WARNING]", bucketInitErr);
+    }
+
+    // 2. Upload file to 'packages/' folder
     const filePath = `packages/${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
 
-    let { error: uploadError } = await supabase.storage
+    let { error: uploadError } = await storageClient.storage
       .from("portfolio")
-      .upload(filePath, buffer, {
+      .upload(filePath, fileBody, {
         contentType,
         cacheControl: "3600",
         upsert: false,
       });
 
-    // If bucket doesn't exist, create it and retry upload
+    // If bucket was still missing on first attempt, retry after creation
     if (uploadError && (uploadError.message?.toLowerCase().includes("not found") || uploadError.message?.toLowerCase().includes("bucket"))) {
       try {
-        await supabase.storage.createBucket("portfolio", { public: true });
-        const retry = await supabase.storage
+        await storageClient.storage.createBucket("portfolio", { public: true });
+        const retry = await storageClient.storage
           .from("portfolio")
-          .upload(filePath, buffer, {
+          .upload(filePath, fileBody, {
             contentType,
             cacheControl: "3600",
             upsert: false,
@@ -80,12 +102,16 @@ async function uploadPackageImage(
 
     if (uploadError) {
       console.error("[STORAGE_UPLOAD_ERROR]", uploadError);
-      return { error: `Gagal mengunggah foto paket ke Storage: ${uploadError.message}` };
+      const isFetchFailed = uploadError.message?.toLowerCase().includes("fetch failed");
+      const cleanMsg = isFetchFailed
+        ? "Koneksi ke Supabase Storage timeout atau terputus. Pastikan URL Supabase valid, project Supabase aktif (tidak paused), dan bucket 'portfolio' dapat diakses."
+        : `Gagal mengunggah foto paket ke Storage: ${uploadError.message}`;
+      return { error: cleanMsg };
     }
 
     const {
       data: { publicUrl },
-    } = supabase.storage.from("portfolio").getPublicUrl(filePath);
+    } = storageClient.storage.from("portfolio").getPublicUrl(filePath);
 
     return { url: publicUrl || undefined };
   } catch (err: unknown) {

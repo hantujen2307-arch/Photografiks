@@ -12,6 +12,7 @@ import {
 import { PortfolioItem } from "@/types";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 async function getSupabaseClient() {
   const adminClient = createAdminSupabaseClient();
@@ -105,18 +106,30 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      if (supabase) {
+      const storageClient = createAdminSupabaseClient() || supabase;
+      if (storageClient) {
         const fileExt = file.name.split(".").pop() || "jpg";
         const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${safeExt}`;
         const filePath = `items/${fileName}`;
 
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        // Ensure bucket exists
+        try {
+          const { data: bucketData, error: bucketCheckError } = await storageClient.storage.getBucket("portfolio");
+          if (bucketCheckError || !bucketData) {
+            await storageClient.storage.createBucket("portfolio", {
+              public: true,
+              fileSizeLimit: 10485760,
+              allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+            });
+          }
+        } catch (bucketInitErr) {
+          console.warn("[PORTFOLIO_BUCKET_INIT_WARNING]", bucketInitErr);
+        }
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await storageClient.storage
           .from("portfolio")
-          .upload(filePath, buffer, {
+          .upload(filePath, file, {
             contentType: file.type || "image/jpeg",
             cacheControl: "3600",
             upsert: false,
@@ -124,16 +137,17 @@ export async function POST(request: NextRequest) {
 
         if (uploadError) {
           console.error("[SUPABASE_STORAGE_UPLOAD_ERROR]", uploadError);
-          return NextResponse.json(
-            { error: `Gagal mengunggah foto ke Supabase Storage: ${uploadError.message}` },
-            { status: 500 }
-          );
+          const isFetchFailed = uploadError.message?.toLowerCase().includes("fetch failed");
+          const errorMsg = isFetchFailed
+            ? "Koneksi ke Supabase Storage timeout atau terputus. Pastikan project Supabase aktif dan URL valid."
+            : `Gagal mengunggah foto ke Supabase Storage: ${uploadError.message}`;
+          return NextResponse.json({ error: errorMsg }, { status: 500 });
         }
 
         storagePath = uploadData?.path || filePath;
         const {
           data: { publicUrl },
-        } = supabase.storage.from("portfolio").getPublicUrl(filePath);
+        } = storageClient.storage.from("portfolio").getPublicUrl(filePath);
 
         finalImageUrl = publicUrl;
       }
@@ -271,18 +285,30 @@ export async function PUT(request: NextRequest) {
         );
       }
 
-      if (supabase) {
+      const storageClient = createAdminSupabaseClient() || supabase;
+      if (storageClient) {
         const fileExt = file.name.split(".").pop() || "jpg";
         const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${safeExt}`;
         const filePath = `items/${fileName}`;
 
-        const arrayBuffer = await file.arrayBuffer();
-        const buffer = Buffer.from(arrayBuffer);
+        // Ensure bucket exists
+        try {
+          const { data: bucketData, error: bucketCheckError } = await storageClient.storage.getBucket("portfolio");
+          if (bucketCheckError || !bucketData) {
+            await storageClient.storage.createBucket("portfolio", {
+              public: true,
+              fileSizeLimit: 10485760,
+              allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
+            });
+          }
+        } catch (bucketInitErr) {
+          console.warn("[PORTFOLIO_BUCKET_INIT_WARNING]", bucketInitErr);
+        }
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await storageClient.storage
           .from("portfolio")
-          .upload(filePath, buffer, {
+          .upload(filePath, file, {
             contentType: file.type || "image/jpeg",
             cacheControl: "3600",
             upsert: false,
@@ -290,15 +316,16 @@ export async function PUT(request: NextRequest) {
 
         if (uploadError) {
           console.error("[SUPABASE_STORAGE_UPLOAD_ERROR]", uploadError);
-          return NextResponse.json(
-            { error: `Gagal mengunggah foto baru ke Supabase Storage: ${uploadError.message}` },
-            { status: 500 }
-          );
+          const isFetchFailed = uploadError.message?.toLowerCase().includes("fetch failed");
+          const errorMsg = isFetchFailed
+            ? "Koneksi ke Supabase Storage timeout atau terputus. Pastikan project Supabase aktif dan URL valid."
+            : `Gagal mengunggah foto baru ke Supabase Storage: ${uploadError.message}`;
+          return NextResponse.json({ error: errorMsg }, { status: 500 });
         }
 
         const {
           data: { publicUrl },
-        } = supabase.storage.from("portfolio").getPublicUrl(filePath);
+        } = storageClient.storage.from("portfolio").getPublicUrl(filePath);
 
         updateData.image_url = publicUrl;
         updateData.storage_path = uploadData?.path || filePath;
