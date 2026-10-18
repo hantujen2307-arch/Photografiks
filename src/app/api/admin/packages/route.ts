@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import {
+  createAdminSupabaseClient,
+  uploadToSupabaseStorage,
+} from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { verifyAdminSession } from "@/lib/auth/admin-guard";
 import {
@@ -9,6 +12,7 @@ import {
   createStoredPackage,
   deleteStoredPackage,
 } from "@/lib/data/packages-store";
+import { PackageItem } from "@/types";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -21,23 +25,13 @@ async function getSupabaseClient() {
 
 /**
  * Upload binary file or base64 Data URL to Supabase Storage bucket 'portfolio'.
- * Uses createAdminSupabaseClient (service-role) to ensure RLS bypass and bucket administration.
+ * Uses direct REST upload with service-role authentication to guarantee RLS bypass.
  */
 async function uploadPackageImage(
-  supabase: any,
   fileOrDataUrl: File | string
 ): Promise<{ url?: string; error?: string }> {
-  // Always prioritize the admin client with service_role key for Storage writes
-  const storageClient = createAdminSupabaseClient() || supabase;
-  if (!storageClient) {
-    return {
-      error:
-        "Supabase client tidak tersedia. Pastikan SUPABASE_SERVICE_ROLE_KEY atau NEXT_PUBLIC_SUPABASE_URL sudah diatur di Environment Variables Vercel.",
-    };
-  }
-
   try {
-    let fileBody: File | Buffer;
+    let buffer: Buffer;
     let ext = "jpg";
     let contentType = "image/jpeg";
 
@@ -49,71 +43,19 @@ async function uploadPackageImage(
       const rawExt = matches[1];
       ext = rawExt.includes("png") ? "png" : rawExt.includes("webp") ? "webp" : "jpg";
       contentType = `image/${ext}`;
-      fileBody = Buffer.from(matches[2], "base64");
+      buffer = Buffer.from(matches[2], "base64");
     } else {
       const fileExt = fileOrDataUrl.name.split(".").pop() || "jpg";
       ext = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
       contentType = fileOrDataUrl.type || `image/${ext}`;
-      // Pass the File directly so Supabase Storage can stream it via FormData
-      fileBody = fileOrDataUrl;
+      const arrayBuffer = await fileOrDataUrl.arrayBuffer();
+      buffer = Buffer.from(arrayBuffer);
     }
 
-    // 1. Proactively ensure bucket 'portfolio' exists in Supabase Storage
-    try {
-      const { data: bucketData, error: bucketCheckError } = await storageClient.storage.getBucket("portfolio");
-      if (bucketCheckError || !bucketData) {
-        await storageClient.storage.createBucket("portfolio", {
-          public: true,
-          fileSizeLimit: 10485760, // 10MB
-          allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-        });
-      }
-    } catch (bucketInitErr) {
-      console.warn("[BUCKET_INIT_WARNING]", bucketInitErr);
-    }
-
-    // 2. Upload file to 'packages/' folder
     const filePath = `packages/${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
 
-    let { error: uploadError } = await storageClient.storage
-      .from("portfolio")
-      .upload(filePath, fileBody, {
-        contentType,
-        cacheControl: "3600",
-        upsert: false,
-      });
-
-    // If bucket was still missing on first attempt, retry after creation
-    if (uploadError && (uploadError.message?.toLowerCase().includes("not found") || uploadError.message?.toLowerCase().includes("bucket"))) {
-      try {
-        await storageClient.storage.createBucket("portfolio", { public: true });
-        const retry = await storageClient.storage
-          .from("portfolio")
-          .upload(filePath, fileBody, {
-            contentType,
-            cacheControl: "3600",
-            upsert: false,
-          });
-        uploadError = retry.error;
-      } catch (bucketErr) {
-        console.warn("[BUCKET_CREATE_RETRY_WARNING]", bucketErr);
-      }
-    }
-
-    if (uploadError) {
-      console.error("[STORAGE_UPLOAD_ERROR]", uploadError);
-      const isFetchFailed = uploadError.message?.toLowerCase().includes("fetch failed");
-      const cleanMsg = isFetchFailed
-        ? "Koneksi ke Supabase Storage timeout atau terputus. Pastikan URL Supabase valid, project Supabase aktif (tidak paused), dan bucket 'portfolio' dapat diakses."
-        : `Gagal mengunggah foto paket ke Storage: ${uploadError.message}`;
-      return { error: cleanMsg };
-    }
-
-    const {
-      data: { publicUrl },
-    } = storageClient.storage.from("portfolio").getPublicUrl(filePath);
-
-    return { url: publicUrl || undefined };
+    const res = await uploadToSupabaseStorage("portfolio", filePath, buffer, contentType);
+    return res;
   } catch (err: unknown) {
     console.error("[STORAGE_UPLOAD_EXCEPTION]", err);
     return { error: err instanceof Error ? err.message : "Gagal memproses file gambar." };
@@ -207,20 +149,18 @@ export async function POST(request: NextRequest) {
     let finalImageUrl = directImageUrl || "";
 
     // Upload to Supabase Storage if file attached or Data URL provided
-    if (supabase) {
-      if (file && file.size > 0) {
-        const uploadResult = await uploadPackageImage(supabase, file);
-        if (uploadResult.error) {
-          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
-        }
-        if (uploadResult.url) finalImageUrl = uploadResult.url;
-      } else if (directImageUrl && directImageUrl.startsWith("data:image/")) {
-        const uploadResult = await uploadPackageImage(supabase, directImageUrl);
-        if (uploadResult.error) {
-          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
-        }
-        if (uploadResult.url) finalImageUrl = uploadResult.url;
+    if (file && file.size > 0) {
+      const uploadResult = await uploadPackageImage(file);
+      if (uploadResult.error) {
+        return NextResponse.json({ error: uploadResult.error }, { status: 500 });
       }
+      if (uploadResult.url) finalImageUrl = uploadResult.url;
+    } else if (directImageUrl && directImageUrl.startsWith("data:image/")) {
+      const uploadResult = await uploadPackageImage(directImageUrl);
+      if (uploadResult.error) {
+        return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+      }
+      if (uploadResult.url) finalImageUrl = uploadResult.url;
     }
 
     const slug = name
@@ -241,7 +181,7 @@ export async function POST(request: NextRequest) {
       sort_order: Number(sort_order || 0),
     };
 
-    let resultPackage: any = null;
+    let resultPackage: PackageItem | null = null;
 
     if (supabase) {
       try {
@@ -279,7 +219,7 @@ export async function POST(request: NextRequest) {
       revalidatePath("/");
       revalidatePath("/packages");
       revalidatePath("/booking");
-    } catch (e) {
+    } catch {
       // Ignore
     }
 
@@ -360,20 +300,18 @@ export async function PUT(request: NextRequest) {
     let finalImageUrl = directImageUrl;
 
     // Upload to Supabase Storage if file attached or Data URL provided
-    if (supabase) {
-      if (file && file.size > 0) {
-        const uploadResult = await uploadPackageImage(supabase, file);
-        if (uploadResult.error) {
-          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
-        }
-        if (uploadResult.url) finalImageUrl = uploadResult.url;
-      } else if (directImageUrl && directImageUrl.startsWith("data:image/")) {
-        const uploadResult = await uploadPackageImage(supabase, directImageUrl);
-        if (uploadResult.error) {
-          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
-        }
-        if (uploadResult.url) finalImageUrl = uploadResult.url;
+    if (file && file.size > 0) {
+      const uploadResult = await uploadPackageImage(file);
+      if (uploadResult.error) {
+        return NextResponse.json({ error: uploadResult.error }, { status: 500 });
       }
+      if (uploadResult.url) finalImageUrl = uploadResult.url;
+    } else if (directImageUrl && directImageUrl.startsWith("data:image/")) {
+      const uploadResult = await uploadPackageImage(directImageUrl);
+      if (uploadResult.error) {
+        return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+      }
+      if (uploadResult.url) finalImageUrl = uploadResult.url;
     }
 
     const updateData: Record<string, unknown> = {};
@@ -389,7 +327,7 @@ export async function PUT(request: NextRequest) {
     if (is_active !== undefined) updateData.is_active = is_active;
     if (sort_order !== undefined) updateData.sort_order = sort_order;
 
-    let returnedPackage: any = null;
+    let returnedPackage: PackageItem | null = null;
 
     if (supabase) {
       try {
@@ -433,14 +371,14 @@ export async function PUT(request: NextRequest) {
     // Update in persistent local file storage
     const updatedLocally = updateStoredPackage(id, updateData);
     if (!returnedPackage) {
-      returnedPackage = updatedLocally || { id, ...updateData };
+      returnedPackage = updatedLocally || ({ id, ...updateData } as unknown as PackageItem);
     }
 
     try {
       revalidatePath("/");
       revalidatePath("/packages");
       revalidatePath("/booking");
-    } catch (e) {
+    } catch {
       // Ignore
     }
 
@@ -491,7 +429,7 @@ export async function DELETE(request: NextRequest) {
       revalidatePath("/");
       revalidatePath("/packages");
       revalidatePath("/booking");
-    } catch (e) {
+    } catch {
       // Ignore
     }
 

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
-import { createAdminSupabaseClient } from "@/lib/supabase/admin";
+import {
+  createAdminSupabaseClient,
+  uploadToSupabaseStorage,
+} from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { verifyAdminSession } from "@/lib/auth/admin-guard";
 import {
@@ -106,51 +109,26 @@ export async function POST(request: NextRequest) {
         );
       }
 
-      const storageClient = createAdminSupabaseClient() || supabase;
-      if (storageClient) {
-        const fileExt = file.name.split(".").pop() || "jpg";
-        const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${safeExt}`;
-        const filePath = `items/${fileName}`;
+      const fileExt = file.name.split(".").pop() || "jpg";
+      const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${safeExt}`;
+      const filePath = `items/${fileName}`;
 
-        // Ensure bucket exists
-        try {
-          const { data: bucketData, error: bucketCheckError } = await storageClient.storage.getBucket("portfolio");
-          if (bucketCheckError || !bucketData) {
-            await storageClient.storage.createBucket("portfolio", {
-              public: true,
-              fileSizeLimit: 10485760,
-              allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-            });
-          }
-        } catch (bucketInitErr) {
-          console.warn("[PORTFOLIO_BUCKET_INIT_WARNING]", bucketInitErr);
-        }
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const uploadRes = await uploadToSupabaseStorage(
+        "portfolio",
+        filePath,
+        buffer,
+        file.type || "image/jpeg"
+      );
 
-        const { data: uploadData, error: uploadError } = await storageClient.storage
-          .from("portfolio")
-          .upload(filePath, file, {
-            contentType: file.type || "image/jpeg",
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        if (uploadError) {
-          console.error("[SUPABASE_STORAGE_UPLOAD_ERROR]", uploadError);
-          const isFetchFailed = uploadError.message?.toLowerCase().includes("fetch failed");
-          const errorMsg = isFetchFailed
-            ? "Koneksi ke Supabase Storage timeout atau terputus. Pastikan project Supabase aktif dan URL valid."
-            : `Gagal mengunggah foto ke Supabase Storage: ${uploadError.message}`;
-          return NextResponse.json({ error: errorMsg }, { status: 500 });
-        }
-
-        storagePath = uploadData?.path || filePath;
-        const {
-          data: { publicUrl },
-        } = storageClient.storage.from("portfolio").getPublicUrl(filePath);
-
-        finalImageUrl = publicUrl;
+      if (uploadRes.error) {
+        return NextResponse.json({ error: uploadRes.error }, { status: 500 });
       }
+
+      storagePath = filePath;
+      finalImageUrl = uploadRes.url || "";
     }
 
     if (!finalImageUrl) {
@@ -204,7 +182,7 @@ export async function POST(request: NextRequest) {
     try {
       revalidatePath("/");
       revalidatePath("/portfolio");
-    } catch (e) {
+    } catch {
       // Ignore in non-edge/preview contexts
     }
 
@@ -285,51 +263,26 @@ export async function PUT(request: NextRequest) {
         );
       }
 
-      const storageClient = createAdminSupabaseClient() || supabase;
-      if (storageClient) {
-        const fileExt = file.name.split(".").pop() || "jpg";
-        const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
-        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${safeExt}`;
-        const filePath = `items/${fileName}`;
+      const fileExt = file.name.split(".").pop() || "jpg";
+      const safeExt = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${safeExt}`;
+      const filePath = `items/${fileName}`;
 
-        // Ensure bucket exists
-        try {
-          const { data: bucketData, error: bucketCheckError } = await storageClient.storage.getBucket("portfolio");
-          if (bucketCheckError || !bucketData) {
-            await storageClient.storage.createBucket("portfolio", {
-              public: true,
-              fileSizeLimit: 10485760,
-              allowedMimeTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"],
-            });
-          }
-        } catch (bucketInitErr) {
-          console.warn("[PORTFOLIO_BUCKET_INIT_WARNING]", bucketInitErr);
-        }
+      const arrayBuffer = await file.arrayBuffer();
+      const buffer = Buffer.from(arrayBuffer);
+      const uploadRes = await uploadToSupabaseStorage(
+        "portfolio",
+        filePath,
+        buffer,
+        file.type || "image/jpeg"
+      );
 
-        const { data: uploadData, error: uploadError } = await storageClient.storage
-          .from("portfolio")
-          .upload(filePath, file, {
-            contentType: file.type || "image/jpeg",
-            cacheControl: "3600",
-            upsert: false,
-          });
-
-        if (uploadError) {
-          console.error("[SUPABASE_STORAGE_UPLOAD_ERROR]", uploadError);
-          const isFetchFailed = uploadError.message?.toLowerCase().includes("fetch failed");
-          const errorMsg = isFetchFailed
-            ? "Koneksi ke Supabase Storage timeout atau terputus. Pastikan project Supabase aktif dan URL valid."
-            : `Gagal mengunggah foto baru ke Supabase Storage: ${uploadError.message}`;
-          return NextResponse.json({ error: errorMsg }, { status: 500 });
-        }
-
-        const {
-          data: { publicUrl },
-        } = storageClient.storage.from("portfolio").getPublicUrl(filePath);
-
-        updateData.image_url = publicUrl;
-        updateData.storage_path = uploadData?.path || filePath;
+      if (uploadRes.error) {
+        return NextResponse.json({ error: uploadRes.error }, { status: 500 });
       }
+
+      updateData.image_url = uploadRes.url || "";
+      updateData.storage_path = filePath;
     } else if (directImageUrl && directImageUrl.trim()) {
       updateData.image_url = directImageUrl.trim();
     }
@@ -373,7 +326,7 @@ export async function PUT(request: NextRequest) {
     try {
       revalidatePath("/");
       revalidatePath("/portfolio");
-    } catch (e) {
+    } catch {
       // Ignore in non-edge/preview contexts
     }
 
@@ -431,7 +384,7 @@ export async function DELETE(request: NextRequest) {
     try {
       revalidatePath("/");
       revalidatePath("/portfolio");
-    } catch (e) {
+    } catch {
       // Ignore
     }
 
