@@ -71,7 +71,7 @@ export default function Navbar() {
                   Momen<span className="font-light text-[#9A8973]">.</span>Potrait
                 </span>
                 <span className="text-[9px] tracking-[0.3em] uppercase text-[#9A8973] font-sans -mt-0.5">
-                  Studio &amp; Portraiture
+                  Moment Grads Palembang
                 </span>
               </div>
             </NextLink>
@@ -114,7 +114,7 @@ export default function Navbar() {
                 href="/booking"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#161514] text-[#FCFAF6] text-xs uppercase tracking-[0.15em] font-medium hover:bg-[#232220] transition-all hover:shadow-md hover:-translate-y-0.5 active:translate-y-0"
               >
-                <span>Book Session</span>
+                <span>Booking Sesi Foto</span>
                 <ArrowRight className="w-3.5 h-3.5" />
               </NextLink>
             </div>
@@ -122,7 +122,7 @@ export default function Navbar() {
             {/* Mobile Actions: Quick WA & Hamburger */}
             <div className="flex md:hidden items-center gap-2">
               <a
-                href="https://wa.me/6285157335443?text=Halo%20MOMEN.POTRAIT%2C%20saya%20ingin%20konsultasi%20sesi%20foto"
+                href="https://wa.me/6285157335443?text=Halo%20MOMEN.POTRAIT%20%26%20Moment%20Grads%20Palembang%2C%20saya%20ingin%20konsultasi%20sesi%20foto"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-full bg-[#EBF7EE] text-[#25D366] border border-[#C3E6CB] flex items-center justify-center active:scale-95 transition-all shadow-2xs"
@@ -214,7 +214,7 @@ export default function Navbar() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="flex items-center justify-center gap-2 py-4 text-sm font-medium tracking-wider text-[#FCFAF6] bg-[#161514] rounded-xl hover:bg-[#232220] transition-colors shadow-md min-h-[48px] active:scale-98"
               >
-                <span>Book Your Session</span>
+                <span>Booking Sesi Foto</span>
                 <ArrowRight className="w-4 h-4" />
               </NextLink>
 

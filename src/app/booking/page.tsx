@@ -8,9 +8,9 @@ import { DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import { Sparkles, Loader2 } from "lucide-react";
 
 export const metadata = {
-  title: "Reservasi Sesi Studio",
+  title: "Booking Sesi Foto",
   description:
-    "Pilih paket fotografi dan amankan slot jadwal foto studio Anda di MOMEN.POTRAIT Jakarta.",
+    "Pilih paket fotografi dan amankan slot jadwal foto wisuda outdoor & portrait bersama MOMEN.POTRAIT dan Moment Grads Palembang.",
 };
 
 export const revalidate = 60;
@@ -62,14 +62,14 @@ export default async function BookingPage() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E8E1D5] mb-4">
             <Sparkles className="w-3.5 h-3.5 text-[#9A8973]" />
             <span className="text-[11px] font-sans tracking-[0.2em] uppercase font-semibold text-[#846F54]">
-              Studio Reservation
+              Moment Grads Palembang &bull; Booking
             </span>
           </div>
           <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-normal text-[#161514] tracking-tight mb-3">
-            Reservasi Sesi Fotografi
+            Booking Sesi Fotografi
           </h1>
           <p className="text-sm text-[#6B6862] font-light max-w-xl mx-auto leading-relaxed">
-            Sistem ketersediaan kalender live kami memastikan jadwal yang Anda pilih tidak akan terbentur dengan klien lain.
+            Pilih paket foto, tanggal, dan slot jam yang Anda inginkan. Sistem kalender kami memastikan jadwal terkonfirmasi secara realtime.
           </p>
         </div>
       </section>

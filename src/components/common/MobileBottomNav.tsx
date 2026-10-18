@@ -27,7 +27,7 @@ export default function MobileBottomNav({
 
   const waUrl = createWhatsAppUrl(
     whatsappNumber,
-    "Halo MOMEN.POTRAIT, saya ingin bertanya mengenai ketersediaan jadwal dan paket foto studio."
+    "Halo MOMEN.POTRAIT & Moment Grads Palembang, saya ingin konsultasi mengenai sesi foto wisuda / portrait."
   );
 
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {

@@ -69,7 +69,7 @@ export default function PackagesSection({
             <SectionHeading
               eyebrow="Pricing & Experiences"
               title="Curated Photography Packages"
-              description="Investasi berharga untuk mengabadikan momen istimewa. Seluruh paket mencakup studio privat, pengarahan pose profesional, dan file asli resolusi penuh."
+              description="Pilihan paket pemotretan wisuda outdoor, personal portrait, couple, dan group photography bersama Moment Grads Palembang. Seluruh sesi mencakup pengarahan pose natural dan akses seluruh file asli."
             />
           </div>
 
@@ -193,7 +193,7 @@ export default function PackagesSection({
                         isFeatured ? "text-[#A9A59E]" : "text-[#846F54]"
                       }`}
                     >
-                      Nett per sesi studio / on-location
+                      Nett per sesi foto (Outdoor / On-Location)
                     </span>
                   </div>
 
@@ -266,7 +266,7 @@ export default function PackagesSection({
                         : "bg-[#161514] text-[#FCFAF6] hover:bg-[#2A2926]"
                     }`}
                   >
-                    <span>Pilih Paket Ini</span>
+                    <span>Booking Sesi Foto</span>
                     <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
                   </Link>
                 </div>

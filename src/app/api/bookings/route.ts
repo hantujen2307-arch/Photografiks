@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
           p_package_id: package_id,
           p_session_date: session_date,
           p_start_time: start_time,
-          p_session_location: session_location || "Studio MOMEN.POTRAIT (Senopati)",
+          p_session_location: session_location || "Palembang & Indralaya (Outdoor / On-Location)",
           p_notes: notes || null,
         }
       );
@@ -170,7 +170,7 @@ export async function POST(request: NextRequest) {
         session_date,
         start_time,
         end_time: endTimeStr,
-        session_location: session_location || "Studio MOMEN.POTRAIT (Senopati)",
+        session_location: session_location || "Palembang & Indralaya (Outdoor / On-Location)",
         notes: notes || null,
         total_price: verifiedPrice,
         status: "pending",
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
         session_date,
         start_time,
         end_time: endTimeStr,
-        session_location: session_location || "Studio MOMEN.POTRAIT (Senopati)",
+        session_location: session_location || "Palembang & Indralaya (Outdoor / On-Location)",
         notes: notes || null,
         total_price: verifiedPrice,
         status: "pending",

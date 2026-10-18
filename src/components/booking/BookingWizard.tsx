@@ -62,7 +62,7 @@ export default function BookingWizard({
   const [customerWhatsapp, setCustomerWhatsapp] = useState("");
   const [customerEmail, setCustomerEmail] = useState("");
   const [sessionLocation, setSessionLocation] = useState(
-    "Studio MOMEN.POTRAIT (Senopati, Jakarta Selatan)"
+    "Area Palembang (Outdoor / Kampus / Spot Pilihan)"
   );
   const [notes, setNotes] = useState("");
 
@@ -785,17 +785,17 @@ export default function BookingWizard({
                     onChange={(e) => setSessionLocation(e.target.value)}
                     className="w-full pl-10 sm:pl-11 pr-3.5 sm:pr-4 py-3 rounded-xl border border-[#E8E1D5] text-base sm:text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
                   >
-                    <option value="Studio MOMEN.POTRAIT (Senopati, Jakarta Selatan)">
-                      Studio MOMEN.POTRAIT (Senopati, Jakarta Selatan)
+                    <option value="Area Palembang (Outdoor / Kampus / Spot Pilihan)">
+                      Area Palembang (Outdoor / Kampus / Spot Pilihan)
                     </option>
-                    <option value="Semi-Outdoor / Garden Studio">
-                      Semi-Outdoor / Garden Studio
+                    <option value="Area Indralaya (Outdoor / Kampus UNSRI / Spot Pilihan)">
+                      Area Indralaya (Outdoor / Kampus UNSRI / Spot Pilihan)
                     </option>
-                    <option value="On-Location / Outdoor (Jakarta Area)">
-                      On-Location / Outdoor (Area Jakarta)
+                    <option value="Indoor / Studio Partner (Palembang)">
+                      Indoor / Studio Partner (Palembang)
                     </option>
-                    <option value="Lokasi Pribadi Klien (Rumah / Venue Khusus)">
-                      Lokasi Pribadi Klien (Rumah / Venue Khusus)
+                    <option value="Lokasi Khusus / Venue Acara Wisuda">
+                      Lokasi Khusus / Venue Acara Wisuda
                     </option>
                   </select>
                 </div>

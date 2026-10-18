@@ -193,7 +193,7 @@ VALUES ('<PASTE-USER-UID-DISINI>', 'admin@momenpotrait.com', 'Super Admin', 'sup
 
       {/* Bottom info */}
       <div className="text-center text-xs text-[#846F54] font-light">
-        MOMEN.POTRAIT Enterprise Management System &bull; Jakarta, Indonesia
+        MOMEN.POTRAIT Enterprise Management System &bull; Palembang, Indonesia
       </div>
     </div>
   );

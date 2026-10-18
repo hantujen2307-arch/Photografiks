@@ -11,7 +11,7 @@ export default function Footer({
 }) {
   const waUrl = createWhatsAppUrl(
     settings.whatsapp_number,
-    "Halo MOMEN.POTRAIT, saya ingin bertanya mengenai ketersediaan jadwal foto studio."
+    "Halo MOMEN.POTRAIT & Moment Grads Palembang, saya ingin konsultasi mengenai paket dan jadwal foto wisuda / portrait."
   );
 
   return (
@@ -68,7 +68,7 @@ export default function Footer({
           {/* Navigation Links */}
           <div className="md:col-span-3 flex flex-col gap-4">
             <h4 className="text-xs uppercase tracking-[0.2em] text-[#C9BBA7] font-semibold">
-              Eksplorasi Studio
+              Eksplorasi Layanan
             </h4>
             <ul className="flex flex-col gap-2.5 text-sm font-light text-[#D5D0C7]">
               <li>
@@ -83,12 +83,12 @@ export default function Footer({
               </li>
               <li>
                 <Link href="/packages" className="hover:text-white transition-colors">
-                  Paket &amp; Investasi
+                  Paket Foto
                 </Link>
               </li>
               <li>
                 <Link href="/booking" className="hover:text-white transition-colors">
-                  Reservasi Jadwal
+                  Booking Sesi Foto
                 </Link>
               </li>
               <li>
@@ -107,7 +107,7 @@ export default function Footer({
           {/* Studio Visit & Operational Hours */}
           <div className="md:col-span-4 flex flex-col gap-4">
             <h4 className="text-xs uppercase tracking-[0.2em] text-[#C9BBA7] font-semibold">
-              Kunjungi Studio
+              Layanan &amp; Lokasi
             </h4>
             <div className="flex items-start gap-3 text-sm text-[#D5D0C7] font-light">
               <MapPin className="w-4 h-4 text-[#C9BBA7] shrink-0 mt-0.5" />
@@ -126,7 +126,7 @@ export default function Footer({
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#C9BBA7] hover:text-white font-medium group"
               >
-                <span>Chat via WhatsApp Official</span>
+                <span>Konsultasi via WhatsApp</span>
                 <ArrowUpRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </a>
             </div>
@@ -136,7 +136,7 @@ export default function Footer({
         {/* Bottom Bar */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#827E77] font-light">
           <p>
-            &copy; 2026 MOMEN.POTRAIT. All rights reserved. Every moment is sacred.
+            &copy; 2026 MOMEN.POTRAIT &bull; Moment Grads Palembang. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <Link
@@ -146,7 +146,7 @@ export default function Footer({
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>Admin Dashboard</span>
             </Link>
-            <span>Jakarta, Indonesia</span>
+            <span>Serving Palembang &amp; Indralaya, South Sumatra</span>
           </div>
         </div>
       </div>

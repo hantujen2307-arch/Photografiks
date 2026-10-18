@@ -32,7 +32,7 @@ export default function FeaturedPortfolio({
         <SectionHeading
           eyebrow="Visual Journal"
           title="Captured Moments, Eternal Stories"
-          description="Eksplorasi pilihan karya fotografi studio dan outdoor dengan estetika editorial, penataan cahaya artistik, dan ekspresi natural tanpa paksaan."
+          description="Setiap foto punya cerita. Temukan inspirasi untuk mengabadikan momen spesialmu bersama MOMEN.POTRAIT."
         />
 
         {/* Filter Pills with touch-friendly swipe on mobile */}
@@ -103,7 +103,7 @@ export default function FeaturedPortfolio({
             href="/portfolio"
             className="inline-flex items-center gap-3 px-8 py-3.5 rounded-full border border-[#161514] text-[#161514] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#161514] hover:text-[#FCFAF6] transition-all group"
           >
-            <span>Lihat Galeri Lengkap</span>
+            <span>Jelajahi Portofolio</span>
             <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
           </Link>
         </div>
@@ -149,12 +149,12 @@ export default function FeaturedPortfolio({
                 </h3>
                 <p className="text-sm text-[#A9A59E] font-light leading-relaxed mb-6">
                   {selectedPhoto.description ||
-                    "Karya editorial eksklusif MOMEN.POTRAIT dengan penataan komposisi estetik dan pencahayaan studio berstandar internasional."}
+                    "Dokumentasi portofolio Moment Grads Palembang bersama MOMEN.POTRAIT dengan pencahayaan alami dan arahan pose estetik."}
                 </p>
 
                 <div className="pt-4 border-t border-white/10 text-xs text-[#73706A] flex flex-col gap-1.5 font-light">
-                  <div>Studio: MOMEN.POTRAIT Jakarta</div>
-                  <div>Format: High-Resolution Fine Art Delivery</div>
+                  <div>Layanan: MOMEN.POTRAIT • Moment Grads Palembang</div>
+                  <div>Format: High-Resolution Delivery via Google Drive</div>
                 </div>
               </div>
 
@@ -163,7 +163,7 @@ export default function FeaturedPortfolio({
                   href={`/booking`}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-full bg-[#FCFAF6] text-[#161514] text-xs uppercase tracking-widest font-medium hover:bg-[#DFC9A8] transition-colors"
                 >
-                  <span>Reservasi Sesi Serupa</span>
+                  <span>Booking Sesi Foto</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>

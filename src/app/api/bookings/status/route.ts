@@ -78,7 +78,7 @@ export async function GET(request: NextRequest) {
           session_date: new Date().toISOString().split("T")[0],
           start_time: "10:00:00",
           end_time: "11:30:00",
-          session_location: "Studio MOMEN.POTRAIT (Senopati, Jakarta Selatan)",
+          session_location: "Palembang & Indralaya (Outdoor / On-Location)",
           total_price: 1350000,
           status: "pending",
           package: {

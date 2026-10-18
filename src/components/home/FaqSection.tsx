@@ -26,7 +26,7 @@ export default function FaqSection({
         <SectionHeading
           eyebrow="Tanya Jawab"
           title="Pertanyaan yang Sering Diajukan"
-          description="Segala hal yang perlu Anda ketahui mengenai reservasi, persiapan konsep, fasilitas studio, dan alur kerja MOMEN.POTRAIT."
+          description="Segala hal yang perlu Anda ketahui mengenai reservasi, persiapan konsep pemotretan wisuda outdoor & portrait bersama MOMEN.POTRAIT dan Moment Grads Palembang."
         />
 
         <div className="space-y-3 sm:space-y-4">

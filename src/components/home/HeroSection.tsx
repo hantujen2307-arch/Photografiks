@@ -17,7 +17,7 @@ interface HeroSectionProps {
 
 export default function HeroSection({
   headline = "Every Moment Deserves to Be Remembered.",
-  subheadline = "Studio fotografi editorial & portrait di Jakarta. Menghadirkan karya visual yang intim, abadi, dan bercerita tentang jati diri Anda.",
+  subheadline = "Abadikan momen wisuda dan cerita berhargamu dalam potret yang estetik, natural, dan penuh kenangan.",
   imageUrl,
   secondaryImageUrl,
 }: HeroSectionProps) {
@@ -44,7 +44,7 @@ export default function HeroSection({
             <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] mb-4 sm:mb-6">
               <Sparkles className="w-3.5 h-3.5 text-[#9A8973]" />
               <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.2em] uppercase font-semibold text-[#846F54]">
-                Editorial &amp; Timeless Portrait Studio
+                Moment Grads Palembang • Graduation &amp; Portrait
               </span>
             </div>
 
@@ -64,7 +64,7 @@ export default function HeroSection({
                 href="/booking"
                 className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 rounded-full bg-[#161514] text-[#FCFAF6] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#2A2926] transition-all hover:shadow-lg active:scale-98"
               >
-                <span>Book Your Session</span>
+                <span>Booking Sesi Foto</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
 
@@ -72,7 +72,7 @@ export default function HeroSection({
                 href="/portfolio"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 sm:py-4 rounded-full border border-[#D5CDBC] text-[#161514] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#F4EFE6] transition-all active:scale-98"
               >
-                <span>Explore Portfolio</span>
+                <span>Jelajahi Portofolio</span>
               </Link>
             </div>
 
@@ -126,10 +126,10 @@ export default function HeroSection({
 
                 <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 text-white">
                   <span className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase font-semibold text-[#DFC9A8] block mb-1">
-                    Signature Portrait
+                    Moment Grads Palembang
                   </span>
                   <h3 className="font-serif text-lg sm:text-xl font-normal leading-snug">
-                    Natural Light &amp; Editorial Intimacy
+                    Aesthetic, Natural &amp; Timeless Memories
                   </h3>
                 </div>
               </div>
@@ -138,14 +138,14 @@ export default function HeroSection({
               <div className="hidden sm:block absolute -bottom-8 -left-10 w-44 aspect-[4/5] rounded-xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <Image
                   src={secondaryPhoto}
-                  alt="Couple Moment"
+                  alt="Graduation Moment"
                   fill
                   unoptimized={isSecondaryCustomHost}
                   className="object-cover object-center"
                   sizes="180px"
                 />
                 <div className="absolute bottom-2 left-2 right-2 bg-black/60 backdrop-blur-xs py-1 px-2 rounded text-[9px] text-white tracking-widest uppercase text-center font-sans">
-                  Couple Story
+                  Graduation Story
                 </div>
               </div>
 

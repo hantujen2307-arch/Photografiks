@@ -25,21 +25,23 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | MOMEN.POTRAIT — Studio & Portrait Photography",
-    default: "MOMEN.POTRAIT — Every Moment Deserves to Be Remembered",
+    template: "%s | MOMEN.POTRAIT — Moment Grads Palembang",
+    default: "MOMEN.POTRAIT — Every Moment Deserves to Be Remembered.",
   },
   description:
-    "MOMEN.POTRAIT adalah studio fotografi profesional dengan pendekatan editorial dan intim. Melayani portrait pribadi, couple, graduation, family, dan commercial session.",
+    "MOMEN.POTRAIT bersama Moment Grads Palembang menghadirkan layanan fotografi wisuda outdoor, personal portrait, couple, family, dan group photography di Palembang–Indralaya, Sumatera Selatan. Abadikan momen wisuda dan cerita berhargamu dalam potret yang estetik, natural, dan penuh kenangan.",
   keywords: [
-    "fotografi studio jakarta",
+    "fotografi wisuda palembang",
+    "moment grads palembang",
     "momen potrait",
-    "portrait photography",
-    "foto wisuda jakarta",
-    "couple photoshoot",
-    "editorial photography",
-    "jasa foto profesional",
+    "foto wisuda unsri",
+    "fotografer indralaya",
+    "wisuda outdoor palembang",
+    "portrait photography palembang",
+    "foto wisuda couple",
+    "foto wisuda keluarga",
   ],
-  authors: [{ name: "MOMEN.POTRAIT Studio" }],
+  authors: [{ name: "MOMEN.POTRAIT • Moment Grads Palembang" }],
 };
 
 import MobileBottomNav from "@/components/common/MobileBottomNav";

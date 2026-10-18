@@ -9,9 +9,9 @@ import { DEFAULT_FAQS, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import { Sparkles, Plus, CheckCircle2 } from "lucide-react";
 
 export const metadata = {
-  title: "Paket & Investasi",
+  title: "Paket Foto",
   description:
-    "Daftar paket fotografi studio dan portraiture eksklusif MOMEN.POTRAIT Jakarta. Transparan, terpercaya, dan tanpa biaya tersembunyi.",
+    "Daftar paket fotografi wisuda outdoor, personal portrait, couple, dan group photography bersama MOMEN.POTRAIT dan Moment Grads Palembang.",
 };
 
 export const revalidate = 60;
@@ -25,7 +25,7 @@ const ADD_ONS = [
   {
     title: "Ekstra Waktu Sesi (30 Menit)",
     price: "Rp 350.000",
-    desc: "Perpanjangan waktu studio untuk eksplorasi konsep busana tambahan.",
+    desc: "Perpanjangan waktu sesi untuk eksplorasi spot dan pose tambahan.",
   },
   {
     title: "Layanan Kilat (Express 24 Jam)",
@@ -83,14 +83,14 @@ export default async function PackagesPage() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E8E1D5] mb-5">
             <Sparkles className="w-3.5 h-3.5 text-[#9A8973]" />
             <span className="text-[11px] font-sans tracking-[0.2em] uppercase font-semibold text-[#846F54]">
-              Investment &amp; Offerings
+              Moment Grads Palembang &bull; Packages
             </span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#161514] tracking-tight mb-4">
-            Paket Sesi Fotografi Studio
+            Paket Fotografi Wisuda &amp; Portrait
           </h1>
           <p className="text-sm sm:text-base text-[#6B6862] font-light max-w-2xl mx-auto leading-relaxed">
-            Setiap paket dirancang untuk memberikan kenyamanan studio privat, pengarahan pose profesional, dan file asli tanpa kompromi kualitas.
+            Pilihan paket foto wisuda outdoor, personal portrait, couple, family, dan group photography di area Palembang dan Indralaya. Seluruh sesi mencakup pengarahan pose natural dan akses seluruh file asli.
           </p>
         </div>
       </section>

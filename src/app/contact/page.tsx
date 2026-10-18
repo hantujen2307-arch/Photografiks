@@ -15,9 +15,9 @@ import {
 } from "lucide-react";
 
 export const metadata = {
-  title: "Kontak & Lokasi Studio",
+  title: "Kontak & Layanan Fotografi",
   description:
-    "Hubungi MOMEN.POTRAIT Studio Jakarta. Konsultasi konsep pemotretan, pertanyaan jadwal, atau kunjungan studio.",
+    "Hubungi MOMEN.POTRAIT dan Moment Grads Palembang. Konsultasi konsep pemotretan wisuda outdoor, personal portrait, couple, dan group photography di Palembang & Indralaya.",
 };
 
 export const revalidate = 60;
@@ -51,7 +51,7 @@ export default async function ContactPage() {
 
   const waUrl = createWhatsAppUrl(
     settings.whatsapp_number,
-    "Halo MOMEN.POTRAIT, saya ingin bertanya tentang ketersediaan sesi foto studio."
+    "Halo MOMEN.POTRAIT & Moment Grads Palembang, saya ingin konsultasi mengenai jadwal dan paket foto."
   );
 
   return (
@@ -64,14 +64,14 @@ export default async function ContactPage() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E8E1D5] mb-5">
             <Sparkles className="w-3.5 h-3.5 text-[#9A8973]" />
             <span className="text-[11px] font-sans tracking-[0.2em] uppercase font-semibold text-[#846F54]">
-              Studio Inquiries
+              Moment Grads Palembang &bull; Contact
             </span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#161514] tracking-tight mb-4">
-            Terhubung Bersama Kami
+            Hubungi Kami
           </h1>
           <p className="text-sm sm:text-base text-[#6B6862] font-light max-w-2xl mx-auto leading-relaxed">
-            Punya pertanyaan mengenai konsep pemotretan, custom session, atau ingin berkunjung ke studio? Tim kami siap menyambut Anda.
+            Punya pertanyaan mengenai sesi foto wisuda outdoor, personal portrait, pemilihan lokasi di Palembang &amp; Indralaya, atau ketersediaan jadwal? Tim kami siap membantu Anda.
           </p>
         </div>
       </section>
@@ -84,7 +84,7 @@ export default async function ContactPage() {
             <div className="lg:col-span-5 flex flex-col justify-between bg-[#161514] text-[#FCFAF6] p-8 sm:p-10 rounded-3xl shadow-xl">
               <div>
                 <span className="text-[11px] uppercase tracking-[0.25em] text-[#C9BBA7] font-semibold block mb-3">
-                  Informasi Resmi Studio
+                  Informasi Resmi Layanan
                 </span>
                 <h2 className="font-serif text-3xl font-normal text-white mb-8">
                   MOMEN.POTRAIT
@@ -97,7 +97,7 @@ export default async function ContactPage() {
                     </div>
                     <div>
                       <strong className="block text-xs uppercase tracking-wider text-[#A9A59E] mb-1 font-semibold">
-                        Alamat Studio
+                        Area Layanan Utama
                       </strong>
                       <p className="leading-relaxed">{settings.studio_address}</p>
                     </div>
@@ -146,7 +146,7 @@ export default async function ContactPage() {
                   className="w-full flex items-center justify-center gap-3 py-4 rounded-full bg-[#25D366] text-white text-xs uppercase tracking-[0.16em] font-semibold hover:bg-[#20ba59] transition-all shadow-md group"
                 >
                   <MessageCircle className="w-4 h-4 fill-white" />
-                  <span>Chat WhatsApp Sekarang</span>
+                  <span>Konsultasi via WhatsApp</span>
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
                 </a>
               </div>
@@ -232,7 +232,7 @@ export default async function ContactPage() {
                   className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-[#161514] text-[#FCFAF6] text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#2A2926] transition-all shadow-md"
                 >
                   <Send className="w-3.5 h-3.5" />
-                  <span>Kirim Pesan via WhatsApp Studio</span>
+                  <span>Konsultasi via WhatsApp</span>
                 </button>
               </form>
             </div>

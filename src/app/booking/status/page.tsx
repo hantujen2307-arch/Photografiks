@@ -233,7 +233,7 @@ function StatusContent() {
 
           <div className="py-6 border-b border-[#E8E1D5] space-y-2 text-xs">
             <div className="flex items-center justify-between">
-              <span className="text-[#9A8973]">Lokasi Studio:</span>
+              <span className="text-[#9A8973]">Lokasi Sesi:</span>
               <span className="font-medium text-[#161514]">
                 {booking.session_location}
               </span>
@@ -251,14 +251,14 @@ function StatusContent() {
             <a
               href={createWhatsAppUrl(
                 "6285157335443",
-                `Halo Admin MOMEN.POTRAIT, saya ingin menanyakan status booking *${booking.booking_reference}* atas nama *${booking.customer_name}*.`
+                `Halo Admin MOMEN.POTRAIT & Moment Grads Palembang, saya ingin menanyakan status booking *${booking.booking_reference}* atas nama *${booking.customer_name}*.`
               )}
               target="_blank"
               rel="noopener noreferrer"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#25D366] text-white text-xs uppercase tracking-wider font-semibold hover:bg-[#20ba59] transition-all"
             >
               <MessageCircle className="w-4 h-4 fill-white" />
-              <span>Hubungi Admin Studio</span>
+              <span>Konsultasi via WhatsApp</span>
             </a>
 
             <Link

@@ -113,9 +113,9 @@ export function generateWhatsAppBookingMessage(params: WhatsAppBookingParams): s
   const formattedPrice = formatIDR(params.price);
 
   return [
-    "Halo MOMEN.POTRAIT, saya ingin melakukan pemesanan sesi foto studio:",
+    "Halo MOMEN.POTRAIT & Moment Grads Palembang, saya ingin melakukan pemesanan sesi foto:",
     "",
-    "📋 *DETAIL RESERVASI MOMEN.POTRAIT*",
+    "📋 *DETAIL RESERVASI MOMEN.POTRAIT • MOMENT GRADS*",
     "━━━━━━━━━━━━━━━━━━━━",
     `• *No. Referensi:* ${params.bookingReference}`,
     `• *Tanggal Order:* ${params.orderDateTime}`,

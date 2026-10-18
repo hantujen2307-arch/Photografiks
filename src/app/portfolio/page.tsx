@@ -11,7 +11,7 @@ import { ArrowRight, Sparkles } from "lucide-react";
 export const metadata = {
   title: "Galeri Portofolio",
   description:
-    "Eksplorasi dokumentasi karya editorial, portrait, wisuda, couple, dan keluarga oleh MOMEN.POTRAIT Studio Jakarta.",
+    "Eksplorasi portofolio wisuda outdoor, personal portrait, couple, dan family photography oleh MOMEN.POTRAIT dan Moment Grads Palembang.",
 };
 
 export const revalidate = 60;
@@ -52,14 +52,14 @@ export default async function PortfolioPage() {
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white border border-[#E8E1D5] mb-5">
             <Sparkles className="w-3.5 h-3.5 text-[#9A8973]" />
             <span className="text-[11px] font-sans tracking-[0.2em] uppercase font-semibold text-[#846F54]">
-              Visual Anthology
+              Moment Grads Palembang &bull; Portfolio
             </span>
           </div>
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-normal text-[#161514] tracking-tight mb-4">
-            Galeri Portofolio Studio
+            Galeri Portofolio
           </h1>
           <p className="text-sm sm:text-base text-[#6B6862] font-light max-w-2xl mx-auto leading-relaxed">
-            Kumpulan karya fotografi editorial, potret personal, kisah cinta, perayaan kelulusan, dan kehangatan keluarga yang kami abadikan dengan penuh ketelitian rasa.
+            Setiap foto punya cerita. Temukan inspirasi untuk mengabadikan momen spesialmu bersama MOMEN.POTRAIT.
           </p>
         </div>
       </section>
@@ -77,21 +77,21 @@ export default async function PortfolioPage() {
             Siap Mengabadikan Momen Berharga Anda?
           </h2>
           <p className="text-sm sm:text-base text-[#A9A59E] font-light max-w-xl mx-auto mb-10 leading-relaxed">
-            Slot sesi studio kami terbatas setiap minggunya untuk menjaga kualitas pengerjaan dan privasi Anda. Amankan tanggal pilihan Anda sekarang.
+            Slot jadwal pemotretan kami terbatas setiap minggunya untuk memastikan setiap sesi berlangsung optimal. Amankan tanggal pilihan Anda sekarang.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               href="/booking"
               className="px-8 py-4 rounded-full bg-[#FCFAF6] text-[#161514] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#DFC9A8] transition-all flex items-center gap-2 shadow-lg"
             >
-              <span>Jadwalkan Sesi Sekarang</span>
+              <span>Booking Sesi Foto</span>
               <ArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/packages"
               className="px-8 py-4 rounded-full border border-white/20 text-[#FCFAF6] text-xs uppercase tracking-[0.18em] font-medium hover:bg-white/10 transition-all"
             >
-              <span>Lihat Detail Paket</span>
+              <span>Lihat Paket Foto</span>
             </Link>
           </div>
         </div>
