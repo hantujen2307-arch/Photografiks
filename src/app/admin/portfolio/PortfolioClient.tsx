@@ -197,11 +197,11 @@ export default function PortfolioClient() {
           <span>Memuat galeri...</span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
           {items.map((item) => (
             <div
               key={item.id}
-              className="group bg-white rounded-3xl border border-[#E8E1D5] overflow-hidden shadow-xs flex flex-col justify-between hover:shadow-md transition-all"
+              className="group bg-white rounded-2xl sm:rounded-3xl border border-[#E8E1D5] overflow-hidden shadow-xs flex flex-col justify-between hover:shadow-md transition-all"
             >
               <div>
                 <div className="relative aspect-[3/4] w-full bg-[#F4EFE6] overflow-hidden">

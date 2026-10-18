@@ -53,13 +53,13 @@ export default function FeaturedPortfolio({
           ))}
         </div>
 
-        {/* Portfolio Masonry-like Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+        {/* Portfolio Grid: 2 kolom berdampingan di HP (2 photo sampingan, 2 di bawahnya), 3 di desktop */}
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-6 lg:gap-8">
           {filteredItems.map((item, idx) => (
             <div
               key={item.id || idx}
               onClick={() => setSelectedPhoto(item)}
-              className="group relative cursor-pointer overflow-hidden rounded-2xl bg-[#E8E1D5] border border-[#E8E1D5] shadow-2xs transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl active:scale-99"
+              className="group relative cursor-pointer overflow-hidden rounded-xl sm:rounded-2xl bg-[#E8E1D5] border border-[#E8E1D5] shadow-2xs transition-all duration-300 hover:-translate-y-1 hover:shadow-xl active:scale-98"
             >
               <div className="relative aspect-[3/4] w-full overflow-hidden">
                 <Image
@@ -67,27 +67,27 @@ export default function FeaturedPortfolio({
                   alt={item.title}
                   fill
                   className="object-cover object-center transition-transform duration-700 ease-out group-hover:scale-108"
-                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 33vw"
                 />
 
                 {/* Gradient overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent opacity-70 group-hover:opacity-90 transition-opacity duration-300" />
 
                 {/* Eye Quick View Button */}
-                <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                  <Eye className="w-4 h-4" />
+                <div className="absolute top-2 right-2 sm:top-4 sm:right-4 w-6 h-6 sm:w-9 sm:h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-1 sm:translate-y-2 group-hover:translate-y-0">
+                  <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                 </div>
 
                 {/* Content Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white transform transition-transform duration-300">
-                  <span className="text-[9px] sm:text-[10px] tracking-[0.22em] uppercase font-semibold text-[#DFC9A8] block mb-1">
+                <div className="absolute bottom-0 left-0 right-0 p-2.5 sm:p-5 lg:p-6 text-white transform transition-transform duration-300">
+                  <span className="text-[8px] sm:text-[10px] tracking-[0.16em] sm:tracking-[0.22em] uppercase font-semibold text-[#DFC9A8] block mb-0.5 sm:mb-1">
                     {item.category}
                   </span>
-                  <h3 className="font-serif text-lg sm:text-2xl font-normal leading-tight mb-1 sm:mb-2">
+                  <h3 className="font-serif text-xs sm:text-lg lg:text-2xl font-normal leading-tight mb-0.5 sm:mb-2 line-clamp-1 sm:line-clamp-none">
                     {item.title}
                   </h3>
                   {item.description && (
-                    <p className="text-xs text-[#D5D0C7] font-light line-clamp-2 leading-relaxed">
+                    <p className="text-[10px] sm:text-xs text-[#D5D0C7] font-light line-clamp-1 sm:line-clamp-2 leading-tight sm:leading-relaxed hidden sm:block">
                       {item.description}
                     </p>
                   )}
