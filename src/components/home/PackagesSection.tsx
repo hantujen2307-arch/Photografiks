@@ -17,7 +17,7 @@ export default function PackagesSection({
     .sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <section className="py-20 lg:py-32 bg-[#FCFAF6]" id="packages">
+    <section className="py-12 sm:py-20 lg:py-32 bg-[#FCFAF6]" id="packages">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Pricing &amp; Experiences"
@@ -25,16 +25,16 @@ export default function PackagesSection({
           description="Investasi berharga untuk mengabadikan momen istimewa. Seluruh paket mencakup studio privat, pengarahan pose profesional, dan file asli resolusi penuh."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8">
           {activePackages.map((pkg, idx) => {
             const isFeatured = idx === 1; // Highlight the 2nd package as most popular
             return (
               <div
                 key={pkg.id}
-                className={`relative flex flex-col justify-between rounded-3xl p-8 transition-all duration-300 ${
+                className={`relative flex flex-col justify-between rounded-2xl sm:rounded-3xl p-5 sm:p-7 lg:p-8 transition-all duration-300 ${
                   isFeatured
-                    ? "bg-[#161514] text-[#FCFAF6] shadow-2xl ring-1 ring-white/10 md:-translate-y-2"
-                    : "bg-white text-[#161514] border border-[#E8E1D5] shadow-xs hover:shadow-xl hover:-translate-y-1"
+                    ? "bg-[#161514] text-[#FCFAF6] shadow-xl sm:shadow-2xl ring-1 ring-white/10 md:-translate-y-2"
+                    : "bg-white text-[#161514] border border-[#E8E1D5] shadow-2xs hover:shadow-xl hover:-translate-y-1"
                 }`}
               >
                 {/* Popular Badge */}
@@ -48,7 +48,7 @@ export default function PackagesSection({
                 <div>
                   {/* Package Hero Image */}
                   {pkg.image_url && (
-                    <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-6 shadow-xs border border-current/10">
+                    <div className="relative aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden mb-4 sm:mb-6 shadow-2xs border border-current/10">
                       <Image
                         src={pkg.image_url}
                         alt={pkg.name}
@@ -61,7 +61,7 @@ export default function PackagesSection({
                   )}
 
                   {/* Package Header */}
-                  <div className="mb-6">
+                  <div className="mb-4 sm:mb-6">
                     <span
                       className={`text-[10px] tracking-[0.2em] uppercase font-semibold block mb-1 ${
                         isFeatured ? "text-[#DFC9A8]" : "text-[#9A8973]"
@@ -70,14 +70,14 @@ export default function PackagesSection({
                       Exclusive Experience
                     </span>
                     <h3
-                      className={`font-serif text-2xl font-normal tracking-tight mb-2 ${
+                      className={`font-serif text-xl sm:text-2xl font-normal tracking-tight mb-1.5 sm:mb-2 ${
                         isFeatured ? "text-white" : "text-[#161514]"
                       }`}
                     >
                       {pkg.name}
                     </h3>
                     <p
-                      className={`text-xs font-light leading-relaxed min-h-[36px] ${
+                      className={`text-xs font-light leading-relaxed min-h-[32px] sm:min-h-[36px] ${
                         isFeatured ? "text-[#A9A59E]" : "text-[#6B6862]"
                       }`}
                     >
@@ -86,14 +86,14 @@ export default function PackagesSection({
                   </div>
 
                   {/* Price */}
-                  <div className="mb-6 pb-6 border-b border-current/10">
+                  <div className="mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-current/10">
                     <div className="flex items-baseline gap-1">
-                      <span className="font-serif text-3xl sm:text-4xl font-semibold tracking-tight">
+                      <span className="font-serif text-2xl sm:text-3xl lg:text-4xl font-semibold tracking-tight">
                         {formatIDR(pkg.price)}
                       </span>
                     </div>
                     <span
-                      className={`text-[11px] font-light mt-1 block ${
+                      className={`text-[10px] sm:text-[11px] font-light mt-0.5 sm:mt-1 block ${
                         isFeatured ? "text-[#A9A59E]" : "text-[#846F54]"
                       }`}
                     >
@@ -102,9 +102,9 @@ export default function PackagesSection({
                   </div>
 
                   {/* Quick Specs */}
-                  <div className="grid grid-cols-2 gap-3 mb-6">
+                  <div className="grid grid-cols-2 gap-2 sm:gap-3 mb-4 sm:mb-6">
                     <div
-                      className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-light ${
+                      className={`flex items-center gap-1.5 sm:gap-2 p-2 sm:p-2.5 rounded-xl text-xs font-light ${
                         isFeatured ? "bg-white/5 text-[#D5D0C7]" : "bg-[#F4EFE6] text-[#4B4944]"
                       }`}
                     >

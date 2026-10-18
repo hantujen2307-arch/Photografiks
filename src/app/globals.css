@@ -81,3 +81,21 @@ body {
 .editorial-overlay-full {
   background: linear-gradient(180deg, rgba(22, 21, 20, 0.25) 0%, rgba(22, 21, 20, 0.7) 100%);
 }
+
+/* Hide scrollbar for clean touch carousels/pills */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Smartphone touch enhancements */
+@media (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+

@@ -89,39 +89,39 @@ export default function TimeSlotSelector({
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-8 shadow-xs">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#F4EFE6]">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E8E1D5] p-4 sm:p-6 sm:p-8 shadow-xs">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-[#F4EFE6]">
         <div>
-          <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#846F54] block mb-1">
+          <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#846F54] block mb-0.5 sm:mb-1">
             Slot Waktu Tersedia
           </span>
-          <h3 className="font-serif text-2xl font-normal text-[#161514]">
+          <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#161514]">
             Durasi {durationMinutes} Menit
           </h3>
         </div>
 
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#F4EFE6] text-[11px] text-[#846F54] font-medium">
+        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F4EFE6] text-[10px] sm:text-[11px] text-[#846F54] font-medium">
           <Sparkles className="w-3.5 h-3.5 text-[#B8976C]" />
-          <span>Real-time Sync</span>
+          <span>Real-time</span>
         </div>
       </div>
 
       {loading ? (
-        <div className="py-12 flex flex-col items-center justify-center gap-3 text-sm text-[#6B6862]">
+        <div className="py-10 flex flex-col items-center justify-center gap-3 text-xs sm:text-sm text-[#6B6862]">
           <Loader2 className="w-6 h-6 animate-spin text-[#161514]" />
           <span>Memeriksa jadwal studio terkini...</span>
         </div>
       ) : error ? (
-        <div className="p-4 rounded-xl bg-red-50 text-red-700 text-sm flex items-center gap-3">
+        <div className="p-4 rounded-xl bg-red-50 text-red-700 text-xs sm:text-sm flex items-center gap-3">
           <AlertCircle className="w-5 h-5 shrink-0" />
           <span>{error}</span>
         </div>
       ) : slots.length === 0 ? (
-        <div className="py-12 text-center text-sm text-[#6B6862]">
+        <div className="py-10 text-center text-xs sm:text-sm text-[#6B6862]">
           Tidak ada slot tersedia untuk tanggal ini. Silakan pilih tanggal lain.
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3">
           {slots.map((slot) => {
             const isSelected = selectedTime === slot.startTime;
             const startLabel = formatTimeShort(slot.startTime);
@@ -134,7 +134,7 @@ export default function TimeSlotSelector({
                 disabled={!slot.isAvailable}
                 onClick={() => onSelectTime(slot.startTime, slot.endTime)}
                 className={cn(
-                  "p-3.5 rounded-2xl border text-left flex flex-col justify-between transition-all duration-200 relative",
+                  "p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border text-left flex flex-col justify-between transition-all duration-200 relative active:scale-98",
                   isSelected
                     ? "bg-[#161514] text-white border-[#161514] shadow-md scale-102"
                     : slot.isAvailable

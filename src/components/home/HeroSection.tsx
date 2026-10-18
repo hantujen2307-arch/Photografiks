@@ -13,37 +13,37 @@ export default function HeroSection({
   subheadline = "Studio fotografi editorial & portrait di Jakarta. Menghadirkan karya visual yang intim, abadi, dan bercerita tentang jati diri Anda.",
 }: HeroSectionProps) {
   return (
-    <section className="relative overflow-hidden pt-6 pb-20 lg:pt-12 lg:pb-32">
+    <section className="relative overflow-hidden pt-4 pb-12 sm:pt-10 sm:pb-24 lg:pt-12 lg:pb-32">
       {/* Decorative background aura */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] bg-[#EAE3D4]/50 rounded-full blur-[140px] -z-10 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           {/* Left Column: Editorial Headline & Actions */}
           <div className="lg:col-span-7 flex flex-col items-start">
             {/* Top Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-[#F4EFE6] border border-[#E8E1D5] mb-4 sm:mb-6">
               <Sparkles className="w-3.5 h-3.5 text-[#9A8973]" />
-              <span className="text-[11px] font-sans tracking-[0.2em] uppercase font-semibold text-[#846F54]">
+              <span className="text-[10px] sm:text-[11px] font-sans tracking-[0.2em] uppercase font-semibold text-[#846F54]">
                 Editorial &amp; Timeless Portrait Studio
               </span>
             </div>
 
             {/* Main Headline */}
-            <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-[68px] font-normal tracking-tight text-[#161514] leading-[1.12] mb-6">
+            <h1 className="font-serif text-[32px] sm:text-5xl md:text-6xl lg:text-[68px] font-normal tracking-tight text-[#161514] leading-[1.15] sm:leading-[1.12] mb-4 sm:mb-6">
               {headline}
             </h1>
 
             {/* Subheadline */}
-            <p className="text-base sm:text-lg text-[#6B6862] font-light leading-relaxed max-w-xl mb-10">
+            <p className="text-sm sm:text-lg text-[#6B6862] font-light leading-relaxed max-w-xl mb-6 sm:mb-10">
               {subheadline}
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full sm:w-auto mb-12">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4 w-full sm:w-auto mb-8 sm:mb-12">
               <Link
                 href="/booking"
-                className="inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-full bg-[#161514] text-[#FCFAF6] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#2A2926] transition-all hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex items-center justify-center gap-2.5 px-7 py-3.5 sm:px-8 sm:py-4 rounded-full bg-[#161514] text-[#FCFAF6] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#2A2926] transition-all hover:shadow-lg active:scale-98"
               >
                 <span>Book Your Session</span>
                 <ArrowRight className="w-4 h-4" />
@@ -51,49 +51,49 @@ export default function HeroSection({
 
               <Link
                 href="/portfolio"
-                className="inline-flex items-center justify-center gap-2 px-7 py-4 rounded-full border border-[#D5CDBC] text-[#161514] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#F4EFE6] transition-all"
+                className="inline-flex items-center justify-center gap-2 px-6 py-3.5 sm:px-7 sm:py-4 rounded-full border border-[#D5CDBC] text-[#161514] text-xs uppercase tracking-[0.18em] font-medium hover:bg-[#F4EFE6] transition-all active:scale-98"
               >
                 <span>Explore Portfolio</span>
               </Link>
             </div>
 
             {/* Trust highlights */}
-            <div className="pt-8 border-t border-[#E8E1D5] w-full grid grid-cols-3 gap-6">
+            <div className="pt-6 sm:pt-8 border-t border-[#E8E1D5] w-full grid grid-cols-3 gap-2 sm:gap-6">
               <div>
-                <span className="font-serif text-2xl sm:text-3xl font-medium text-[#161514] block">
+                <span className="font-serif text-xl sm:text-3xl font-medium text-[#161514] block">
                   650+
                 </span>
-                <span className="text-[11px] uppercase tracking-wider text-[#9A8973] font-sans">
-                  Sesi Terlaksana
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#9A8973] font-sans">
+                  Sesi Foto
                 </span>
               </div>
               <div>
                 <div className="flex items-center gap-1">
-                  <span className="font-serif text-2xl sm:text-3xl font-medium text-[#161514]">
+                  <span className="font-serif text-xl sm:text-3xl font-medium text-[#161514]">
                     4.9
                   </span>
-                  <Star className="w-4 h-4 fill-[#B8976C] text-[#B8976C] inline -mt-1" />
+                  <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-[#B8976C] text-[#B8976C] inline -mt-1" />
                 </div>
-                <span className="text-[11px] uppercase tracking-wider text-[#9A8973] font-sans">
-                  Client Rating
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#9A8973] font-sans">
+                  Rating Klien
                 </span>
               </div>
               <div>
-                <span className="font-serif text-2xl sm:text-3xl font-medium text-[#161514] block">
+                <span className="font-serif text-xl sm:text-3xl font-medium text-[#161514] block">
                   100%
                 </span>
-                <span className="text-[11px] uppercase tracking-wider text-[#9A8973] font-sans">
-                  Original RAW Files
+                <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#9A8973] font-sans">
+                  File RAW Asli
                 </span>
               </div>
             </div>
           </div>
 
           {/* Right Column: Editorial Visual Composition */}
-          <div className="lg:col-span-5 relative">
+          <div className="lg:col-span-5 relative mt-4 lg:mt-0">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               {/* Primary Main Image */}
-              <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-2xl border-4 border-white">
+              <div className="relative aspect-[4/5] sm:aspect-[3/4] w-full rounded-2xl overflow-hidden shadow-xl sm:shadow-2xl border-2 sm:border-4 border-white">
                 <Image
                   src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85"
                   alt="MOMEN.POTRAIT Editorial Model"
@@ -104,11 +104,11 @@ export default function HeroSection({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
 
-                <div className="absolute bottom-6 left-6 right-6 text-white">
-                  <span className="text-[10px] tracking-[0.25em] uppercase font-semibold text-[#DFC9A8] block mb-1">
+                <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 text-white">
+                  <span className="text-[9px] sm:text-[10px] tracking-[0.25em] uppercase font-semibold text-[#DFC9A8] block mb-1">
                     Signature Portrait
                   </span>
-                  <h3 className="font-serif text-xl font-normal leading-snug">
+                  <h3 className="font-serif text-lg sm:text-xl font-normal leading-snug">
                     Natural Light &amp; Editorial Intimacy
                   </h3>
                 </div>
@@ -129,12 +129,12 @@ export default function HeroSection({
               </div>
 
               {/* Floating Stamp / Badge */}
-              <div className="absolute -top-6 -right-6 w-24 h-24 rounded-full bg-[#161514] text-[#FCFAF6] p-2 flex flex-col items-center justify-center text-center shadow-lg border border-white/20">
-                <Award className="w-5 h-5 text-[#B8976C] mb-1" />
-                <span className="text-[9px] uppercase tracking-widest font-semibold text-[#DFC9A8]">
+              <div className="absolute top-3 right-3 sm:-top-6 sm:-right-6 w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-[#161514] text-[#FCFAF6] p-2 flex flex-col items-center justify-center text-center shadow-lg border border-white/20">
+                <Award className="w-4 h-4 sm:w-5 sm:h-5 text-[#B8976C] mb-0.5 sm:mb-1" />
+                <span className="text-[8px] sm:text-[9px] uppercase tracking-widest font-semibold text-[#DFC9A8]">
                   Curated
                 </span>
-                <span className="text-[8px] text-[#A9A59E] uppercase tracking-wider">
+                <span className="text-[7px] sm:text-[8px] text-[#A9A59E] uppercase tracking-wider">
                   Studio
                 </span>
               </div>

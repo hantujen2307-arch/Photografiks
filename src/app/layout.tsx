@@ -42,6 +42,8 @@ export const metadata: Metadata = {
   authors: [{ name: "MOMEN.POTRAIT Studio" }],
 };
 
+import MobileBottomNav from "@/components/common/MobileBottomNav";
+
 export default function RootLayout({
   children,
 }: {
@@ -52,8 +54,9 @@ export default function RootLayout({
       lang="id"
       className={`${playfair.variable} ${jakarta.variable} scroll-smooth`}
     >
-      <body className="min-h-screen flex flex-col bg-[#FCFAF6] text-[#161514] selection:bg-[#161514] selection:text-[#FCFAF6]">
+      <body className="min-h-screen flex flex-col bg-[#FCFAF6] text-[#161514] selection:bg-[#161514] selection:text-[#FCFAF6] pb-16 md:pb-0 antialiased overflow-x-hidden">
         {children}
+        <MobileBottomNav />
       </body>
     </html>
   );

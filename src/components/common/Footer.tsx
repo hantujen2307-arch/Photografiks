@@ -15,10 +15,10 @@ export default function Footer({
   );
 
   return (
-    <footer className="bg-[#161514] text-[#FCFAF6] border-t border-[#232220] pt-20 pb-12 mt-auto">
+    <footer className="bg-[#161514] text-[#FCFAF6] border-t border-[#232220] pt-12 sm:pt-20 pb-24 sm:pb-12 mt-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Upper Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-16 border-b border-white/10">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 sm:gap-12 pb-10 sm:pb-16 border-b border-white/10">
           {/* Brand Info */}
           <div className="md:col-span-5 flex flex-col gap-5">
             <div className="flex items-center gap-3">

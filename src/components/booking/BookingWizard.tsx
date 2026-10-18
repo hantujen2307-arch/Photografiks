@@ -412,14 +412,15 @@ export default function BookingWizard({
   return (
     <div className="max-w-5xl mx-auto">
       {/* 3-Step Wizard Navigation */}
-      <div className="mb-10">
-        <div className="flex items-center justify-between max-w-2xl mx-auto relative">
+      {/* 3-Step Wizard Navigation */}
+      <div className="mb-6 sm:mb-10">
+        <div className="flex items-center justify-between max-w-xl mx-auto relative px-2">
           <div className="absolute top-1/2 left-0 right-0 h-0.5 bg-[#E8E1D5] -translate-y-1/2 -z-10" />
 
           {[
-            { step: 1, label: "1. Pilih Paket" },
-            { step: 2, label: "2. Pilih Waktu" },
-            { step: 3, label: "3. Data & Booking WA" },
+            { step: 1, label: "Paket" },
+            { step: 2, label: "Waktu" },
+            { step: 3, label: "Booking WA" },
           ].map((item) => {
             const isCompleted = currentStep > item.step;
             const isCurrent = currentStep === item.step;
@@ -427,10 +428,10 @@ export default function BookingWizard({
             return (
               <div
                 key={item.step}
-                className="flex flex-col items-center gap-2 bg-[#FCFAF6] px-3"
+                className="flex flex-col items-center gap-1.5 bg-[#FCFAF6] px-1.5 sm:px-3"
               >
                 <div
-                  className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
+                  className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full flex items-center justify-center text-xs font-semibold transition-all ${
                     isCurrent
                       ? "bg-[#161514] text-white ring-4 ring-[#E8E1D5]"
                       : isCompleted
@@ -441,7 +442,7 @@ export default function BookingWizard({
                   {isCompleted ? <Check className="w-4 h-4" /> : item.step}
                 </div>
                 <span
-                  className={`text-[11px] font-sans uppercase tracking-wider ${
+                  className={`text-[10px] sm:text-[11px] font-sans uppercase tracking-wider ${
                     isCurrent
                       ? "font-bold text-[#161514]"
                       : "text-[#846F54] font-medium"
@@ -458,16 +459,16 @@ export default function BookingWizard({
       {/* STEP 1: Package Selection */}
       {currentStep === 1 && (
         <div className="animate-in fade-in duration-200">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-3xl font-normal text-[#161514] mb-2">
+          <div className="text-center mb-6 sm:mb-10">
+            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#161514] mb-2">
               Pilih Pengalaman Sesi Anda
             </h2>
-            <p className="text-sm text-[#6B6862] font-light">
+            <p className="text-xs sm:text-sm text-[#6B6862] font-light">
               Tentukan paket yang paling sesuai dengan konsep potret yang Anda rencanakan.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mb-6 sm:mb-10">
             {packages
               .filter((p) => p.is_active)
               .map((pkg) => {
@@ -477,14 +478,14 @@ export default function BookingWizard({
                   <div
                     key={pkg.id}
                     onClick={() => setSelectedPackageId(pkg.id)}
-                    className={`cursor-pointer rounded-3xl p-6 sm:p-8 border transition-all duration-200 relative ${
+                    className={`cursor-pointer rounded-2xl sm:rounded-3xl p-4.5 sm:p-7 border transition-all duration-200 relative active:scale-99 ${
                       isSelected
-                        ? "bg-[#161514] text-white border-[#161514] shadow-xl scale-[1.01]"
+                        ? "bg-[#161514] text-white border-[#161514] shadow-xl"
                         : "bg-white text-[#161514] border-[#E8E1D5] hover:border-[#161514]/40 hover:shadow-md"
                     }`}
                   >
                     {pkg.image_url && (
-                      <div className="relative aspect-[16/10] w-full rounded-2xl overflow-hidden mb-5 border border-current/10">
+                      <div className="relative aspect-[16/10] w-full rounded-xl sm:rounded-2xl overflow-hidden mb-4 border border-current/10">
                         <Image
                           src={pkg.image_url}
                           alt={pkg.name}
@@ -496,33 +497,33 @@ export default function BookingWizard({
                       </div>
                     )}
 
-                    <div className="flex items-start justify-between mb-4">
+                    <div className="flex items-start justify-between mb-3 sm:mb-4">
                       <div>
                         <span
-                          className={`text-[10px] tracking-[0.2em] uppercase font-semibold block mb-1 ${
+                          className={`text-[9px] sm:text-[10px] tracking-[0.2em] uppercase font-semibold block mb-0.5 sm:mb-1 ${
                             isSelected ? "text-[#DFC9A8]" : "text-[#9A8973]"
                           }`}
                         >
                           {pkg.duration_minutes} Menit Sesi
                         </span>
-                        <h3 className="font-serif text-2xl font-normal">
+                        <h3 className="font-serif text-xl sm:text-2xl font-normal">
                           {pkg.name}
                         </h3>
                       </div>
-                      <div className="font-serif text-2xl font-medium">
+                      <div className="font-serif text-xl sm:text-2xl font-medium">
                         {formatIDR(pkg.price)}
                       </div>
                     </div>
 
                     <p
-                      className={`text-xs font-light mb-6 ${
+                      className={`text-xs font-light mb-4 sm:mb-6 ${
                         isSelected ? "text-[#C9BBA7]" : "text-[#6B6862]"
                       }`}
                     >
                       {pkg.tagline}
                     </p>
 
-                    <div className="space-y-2 mb-6">
+                    <div className="space-y-1.5 sm:space-y-2 mb-5 sm:mb-6">
                       {pkg.features.slice(0, 4).map((f, i) => (
                         <div key={i} className="flex items-start gap-2 text-xs font-light">
                           <Check
@@ -556,7 +557,7 @@ export default function BookingWizard({
             <button
               type="button"
               onClick={handleNextFromPackage}
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-full bg-[#161514] text-white text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#2A2926] transition-all shadow-md"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-full bg-[#161514] text-white text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#2A2926] transition-all shadow-md active:scale-98"
             >
               <span>Lanjut ke Pilih Jadwal</span>
               <ArrowRight className="w-4 h-4" />
@@ -568,17 +569,17 @@ export default function BookingWizard({
       {/* STEP 2: Date & Slot Selection */}
       {currentStep === 2 && (
         <div className="animate-in fade-in duration-200">
-          <div className="text-center mb-10">
-            <h2 className="font-serif text-3xl font-normal text-[#161514] mb-2">
+          <div className="text-center mb-6 sm:mb-10">
+            <h2 className="font-serif text-2xl sm:text-3xl font-normal text-[#161514] mb-2">
               Tentukan Tanggal &amp; Jam Sesi
             </h2>
-            <p className="text-sm text-[#6B6862] font-light">
+            <p className="text-xs sm:text-sm text-[#6B6862] font-light">
               Paket: <strong className="text-[#161514]">{selectedPackage?.name}</strong> (
               {selectedPackage?.duration_minutes} Menit Sesi Studio)
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 mb-6 sm:mb-10">
             <div className="lg:col-span-6">
               <InteractiveCalendar
                 selectedDate={selectedDate}
@@ -604,11 +605,11 @@ export default function BookingWizard({
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-[#E8E1D5]">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-4 border-t border-[#E8E1D5]">
             <button
               type="button"
               onClick={() => setCurrentStep(1)}
-              className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full border border-[#E8E1D5] text-[#161514] text-xs uppercase tracking-wider font-medium hover:bg-white transition-all"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full border border-[#E8E1D5] text-[#161514] text-xs uppercase tracking-wider font-medium hover:bg-white transition-all active:scale-98"
             >
               <ArrowLeft className="w-4 h-4" />
               <span>Ganti Paket</span>
@@ -618,7 +619,7 @@ export default function BookingWizard({
               type="button"
               disabled={!selectedDate || !selectedStartTime}
               onClick={handleNextFromSchedule}
-              className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-[#161514] text-white text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#2A2926] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 sm:py-4 rounded-full bg-[#161514] text-white text-xs uppercase tracking-[0.16em] font-medium hover:bg-[#2A2926] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md active:scale-98"
             >
               <span>Lanjut ke Data Pemesan &amp; WA</span>
               <ArrowRight className="w-4 h-4" />
@@ -712,76 +713,76 @@ export default function BookingWizard({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 mb-8 sm:mb-10">
             {/* Left: Input Form */}
-            <div className="lg:col-span-6 space-y-5 bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-8 shadow-xs">
-              <h3 className="font-serif text-xl font-normal text-[#161514] pb-2 border-b border-[#E8E1D5]">
+            <div className="lg:col-span-6 space-y-4 sm:space-y-5 bg-white rounded-2xl sm:rounded-3xl border border-[#E8E1D5] p-4.5 sm:p-7 shadow-xs">
+              <h3 className="font-serif text-lg sm:text-xl font-normal text-[#161514] pb-2 border-b border-[#E8E1D5]">
                 Informasi Pemesan
               </h3>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
+                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-1.5 sm:mb-2">
                   Nama Lengkap Pemesan *
                 </label>
                 <div className="relative">
-                  <User className="w-4 h-4 text-[#9A8973] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <User className="w-4 h-4 text-[#9A8973] absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2" />
                   <input
                     type="text"
                     required
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="e.g. Jessica Alverina"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-[#E8E1D5] text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
+                    className="w-full pl-10 sm:pl-11 pr-3.5 sm:pr-4 py-3 rounded-xl border border-[#E8E1D5] text-base sm:text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
+                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-1.5 sm:mb-2">
                   Nomor WhatsApp Pemesan *
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-[#9A8973] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <Phone className="w-4 h-4 text-[#9A8973] absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2" />
                   <input
                     type="tel"
                     required
                     value={customerWhatsapp}
                     onChange={(e) => setCustomerWhatsapp(e.target.value)}
                     placeholder="e.g. 081234567890"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-[#E8E1D5] text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
+                    className="w-full pl-10 sm:pl-11 pr-3.5 sm:pr-4 py-3 rounded-xl border border-[#E8E1D5] text-base sm:text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
                   />
                 </div>
-                <span className="text-[11px] text-[#846F54] mt-1 block">
+                <span className="text-[10px] sm:text-[11px] text-[#846F54] mt-1 block">
                   Template booking ini akan langsung diteruskan ke WhatsApp studio kami.
                 </span>
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
+                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-1.5 sm:mb-2">
                   Alamat Email (Opsional)
                 </label>
                 <div className="relative">
-                  <Mail className="w-4 h-4 text-[#9A8973] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <Mail className="w-4 h-4 text-[#9A8973] absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2" />
                   <input
                     type="email"
                     value={customerEmail}
                     onChange={(e) => setCustomerEmail(e.target.value)}
                     placeholder="e.g. jessica@email.com"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-[#E8E1D5] text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
+                    className="w-full pl-10 sm:pl-11 pr-3.5 sm:pr-4 py-3 rounded-xl border border-[#E8E1D5] text-base sm:text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
+                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-1.5 sm:mb-2">
                   Lokasi Sesi Sesuai Keinginan
                 </label>
                 <div className="relative">
-                  <MapPin className="w-4 h-4 text-[#9A8973] absolute left-4 top-1/2 -translate-y-1/2" />
+                  <MapPin className="w-4 h-4 text-[#9A8973] absolute left-3.5 sm:left-4 top-1/2 -translate-y-1/2" />
                   <select
                     value={sessionLocation}
                     onChange={(e) => setSessionLocation(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-[#E8E1D5] text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
+                    className="w-full pl-10 sm:pl-11 pr-3.5 sm:pr-4 py-3 rounded-xl border border-[#E8E1D5] text-base sm:text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
                   >
                     <option value="Studio MOMEN.POTRAIT (Senopati, Jakarta Selatan)">
                       Studio MOMEN.POTRAIT (Senopati, Jakarta Selatan)
@@ -800,28 +801,28 @@ export default function BookingWizard({
               </div>
 
               <div>
-                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
+                <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-1.5 sm:mb-2">
                   Catatan Konsep / Dresscode (Opsional)
                 </label>
                 <div className="relative">
-                  <FileText className="w-4 h-4 text-[#9A8973] absolute left-4 top-3.5" />
+                  <FileText className="w-4 h-4 text-[#9A8973] absolute left-3.5 sm:left-4 top-3.5" />
                   <textarea
                     rows={2}
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    placeholder="Contoh: Foto wisuda bersama orang tua, konsep baju warna krem/earth tone..."
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-[#E8E1D5] text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
+                    placeholder="Contoh: Foto wisuda bersama orang tua, konsep baju krem..."
+                    className="w-full pl-10 sm:pl-11 pr-3.5 sm:pr-4 py-3 rounded-xl border border-[#E8E1D5] text-base sm:text-sm focus:outline-hidden focus:border-[#161514] bg-[#FCFAF6]"
                   />
                 </div>
               </div>
             </div>
 
             {/* Right: Live WhatsApp Template Preview */}
-            <div className="lg:col-span-6 flex flex-col justify-between bg-[#F8F9FA] rounded-3xl border border-[#E2E8F0] p-6 sm:p-8 shadow-sm">
+            <div className="lg:col-span-6 flex flex-col justify-between bg-[#F8F9FA] rounded-2xl sm:rounded-3xl border border-[#E2E8F0] p-4.5 sm:p-7 shadow-xs">
               <div>
-                <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] mb-4">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full bg-[#25D366] text-white flex items-center justify-center font-bold text-xs shadow-xs">
+                <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0] mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#25D366] text-white flex items-center justify-center font-bold text-xs shadow-xs">
                       <MessageCircle className="w-4 h-4 fill-white" />
                     </div>
                     <div>
@@ -830,7 +831,7 @@ export default function BookingWizard({
                       </div>
                       <div className="text-[10px] text-[#25D366] font-medium flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-[#25D366] inline-block animate-pulse" />
-                        <span>Template Otomatis Siap Kirim</span>
+                        <span>Format Pesan Otomatis</span>
                       </div>
                     </div>
                   </div>
@@ -838,28 +839,28 @@ export default function BookingWizard({
                   <button
                     type="button"
                     onClick={() => handleCopyTemplate(liveWaMessage)}
-                    className="inline-flex items-center gap-1 text-[11px] text-[#846F54] hover:text-[#161514] font-medium px-2.5 py-1 rounded-md bg-white border border-[#E2E8F0] transition-colors"
+                    className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] text-[#846F54] hover:text-[#161514] font-medium px-2 py-1 rounded-md bg-white border border-[#E2E8F0] transition-colors"
                   >
                     <Copy className="w-3 h-3" />
-                    <span>{copiedTemplate ? "Tersalin!" : "Salin Format"}</span>
+                    <span>{copiedTemplate ? "Tersalin!" : "Salin"}</span>
                   </button>
                 </div>
 
-                <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#E2E8F0] shadow-xs relative">
+                <div className="bg-white rounded-xl sm:rounded-2xl p-3.5 sm:p-5 border border-[#E2E8F0] shadow-xs relative">
                   <div className="text-[10px] uppercase tracking-wider text-[#9A8973] font-semibold mb-2">
-                    Pratinjau Pesan yang Diterima WhatsApp Studio:
+                    Pratinjau Pesan WhatsApp Studio:
                   </div>
-                  <pre className="text-xs text-[#2A2926] font-mono whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto">
+                  <pre className="text-xs text-[#2A2926] font-mono whitespace-pre-wrap leading-relaxed max-h-56 sm:max-h-80 overflow-y-auto">
                     {liveWaMessage}
                   </pre>
                 </div>
               </div>
 
-              <div className="pt-6">
-                <div className="text-[11px] text-[#846F54] leading-relaxed mb-4 flex items-start gap-2 bg-[#F4EFE6]/70 p-3 rounded-xl border border-[#E8E1D5]">
+              <div className="pt-4 sm:pt-6">
+                <div className="text-[10px] sm:text-[11px] text-[#846F54] leading-relaxed mb-3 sm:mb-4 flex items-start gap-2 bg-[#F4EFE6]/70 p-2.5 sm:p-3 rounded-xl border border-[#E8E1D5]">
                   <Check className="w-3.5 h-3.5 text-[#B8976C] shrink-0 mt-0.5" />
                   <span>
-                    Klik tombol di bawah untuk mengunci slot jadwal Anda di database dan langsung membuka WhatsApp dengan format di atas.
+                    Klik tombol di bawah untuk mengunci slot jadwal Anda dan membuka WhatsApp dengan format di atas.
                   </span>
                 </div>
 
@@ -867,12 +868,12 @@ export default function BookingWizard({
                   type="button"
                   disabled={!customerName.trim() || !customerWhatsapp.trim() || isSubmitting}
                   onClick={handleProceedToWhatsApp}
-                  className="w-full inline-flex items-center justify-center gap-2.5 py-4 rounded-full bg-[#25D366] text-white text-xs uppercase tracking-[0.16em] font-semibold hover:bg-[#20ba59] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-lg hover:shadow-xl hover:scale-[1.01]"
+                  className="w-full inline-flex items-center justify-center gap-2.5 py-4 rounded-full bg-[#25D366] text-white text-xs sm:text-sm uppercase tracking-[0.14em] font-semibold hover:bg-[#20ba59] disabled:opacity-40 disabled:cursor-not-allowed transition-all shadow-md active:scale-98"
                 >
                   {isSubmitting ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin text-white" />
-                      <span>Mengamankan Jadwal &amp; Membuka WhatsApp...</span>
+                      <span>Mengamankan Jadwal &amp; Membuka WA...</span>
                     </>
                   ) : (
                     <>

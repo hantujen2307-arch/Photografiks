@@ -35,7 +35,7 @@ const STEPS = [
 
 export default function BookingProcess() {
   return (
-    <section className="py-20 lg:py-28 bg-[#161514] text-[#FCFAF6] relative overflow-hidden">
+    <section className="py-12 sm:py-20 lg:py-28 bg-[#161514] text-[#FCFAF6] relative overflow-hidden">
       {/* Decorative subtle ambient circle */}
       <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-96 h-96 bg-[#262420] rounded-full blur-[120px] -z-10 pointer-events-none" />
 
@@ -47,16 +47,16 @@ export default function BookingProcess() {
           isDark
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-8 relative">
           {STEPS.map((item, index) => {
             const Icon = item.icon;
             return (
               <div
                 key={index}
-                className="relative bg-[#201F1D] border border-white/10 rounded-3xl p-8 flex flex-col justify-between transition-all duration-300 hover:border-[#B8976C]/60 hover:-translate-y-1.5"
+                className="relative bg-[#201F1D] border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 flex flex-col justify-between transition-all duration-300 hover:border-[#B8976C]/60 hover:-translate-y-1.5"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-8">
+                  <div className="flex items-center justify-between mb-5 sm:mb-8">
                     <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#DFC9A8]">
                       <Icon className="w-5 h-5 stroke-[1.75]" />
                     </div>

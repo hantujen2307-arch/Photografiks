@@ -25,7 +25,7 @@ export default function FeaturedPortfolio({
       : items.filter((item) => item.category.toLowerCase() === activeCategory.toLowerCase());
 
   return (
-    <section className="py-20 lg:py-28 bg-[#F4EFE6]/50 border-y border-[#E8E1D5]">
+    <section className="py-12 sm:py-20 lg:py-28 bg-[#F4EFE6]/50 border-y border-[#E8E1D5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Visual Journal"
@@ -33,16 +33,16 @@ export default function FeaturedPortfolio({
           description="Eksplorasi pilihan karya fotografi studio dan outdoor dengan estetika editorial, penataan cahaya artistik, dan ekspresi natural tanpa paksaan."
         />
 
-        {/* Filter Pills */}
-        <div className="flex items-center justify-center flex-wrap gap-2 sm:gap-3 mb-12">
+        {/* Filter Pills with touch-friendly swipe on mobile */}
+        <div className="flex items-center justify-start sm:justify-center overflow-x-auto no-scrollbar gap-2 pb-2 mb-8 sm:mb-12 px-1 -mx-4 sm:mx-0 px-4 sm:px-0">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={cn(
-                "px-5 py-2 rounded-full text-xs uppercase tracking-[0.16em] font-medium transition-all duration-200",
+                "px-4 py-2 sm:px-5 sm:py-2 rounded-full text-[11px] sm:text-xs uppercase tracking-[0.14em] font-medium transition-all duration-200 shrink-0 whitespace-nowrap active:scale-95",
                 activeCategory === cat
-                  ? "bg-[#161514] text-[#FCFAF6] shadow-sm scale-105"
+                  ? "bg-[#161514] text-[#FCFAF6] shadow-sm"
                   : "bg-white text-[#6B6862] hover:text-[#161514] hover:bg-[#E8E1D5] border border-[#E8E1D5]"
               )}
             >
@@ -52,12 +52,12 @@ export default function FeaturedPortfolio({
         </div>
 
         {/* Portfolio Masonry-like Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {filteredItems.map((item, idx) => (
             <div
               key={item.id || idx}
               onClick={() => setSelectedPhoto(item)}
-              className="group relative cursor-pointer overflow-hidden rounded-2xl bg-[#E8E1D5] border border-[#E8E1D5] shadow-xs transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl"
+              className="group relative cursor-pointer overflow-hidden rounded-2xl bg-[#E8E1D5] border border-[#E8E1D5] shadow-2xs transition-all duration-500 hover:-translate-y-1.5 hover:shadow-xl active:scale-99"
             >
               <div className="relative aspect-[3/4] w-full overflow-hidden">
                 <Image
@@ -72,16 +72,16 @@ export default function FeaturedPortfolio({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-60 group-hover:opacity-90 transition-opacity duration-300" />
 
                 {/* Eye Quick View Button */}
-                <div className="absolute top-4 right-4 w-9 h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
+                <div className="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
                   <Eye className="w-4 h-4" />
                 </div>
 
                 {/* Content Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 p-6 text-white transform transition-transform duration-300">
-                  <span className="text-[10px] tracking-[0.22em] uppercase font-semibold text-[#DFC9A8] block mb-1">
+                <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 text-white transform transition-transform duration-300">
+                  <span className="text-[9px] sm:text-[10px] tracking-[0.22em] uppercase font-semibold text-[#DFC9A8] block mb-1">
                     {item.category}
                   </span>
-                  <h3 className="font-serif text-xl sm:text-2xl font-normal leading-tight mb-2">
+                  <h3 className="font-serif text-lg sm:text-2xl font-normal leading-tight mb-1 sm:mb-2">
                     {item.title}
                   </h3>
                   {item.description && (

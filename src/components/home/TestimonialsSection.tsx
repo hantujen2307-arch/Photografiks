@@ -13,7 +13,7 @@ export default function TestimonialsSection({
   const activeTestimonials = testimonials.filter((t) => t.is_active);
 
   return (
-    <section className="py-20 lg:py-28 bg-[#FCFAF6]">
+    <section className="py-12 sm:py-20 lg:py-28 bg-[#FCFAF6]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Kata Klien Kami"
@@ -21,11 +21,11 @@ export default function TestimonialsSection({
           description="Dengarkan pengalaman autentik dari mereka yang telah mempercayakan perayaan momen berharga mereka bersama MOMEN.POTRAIT."
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
           {activeTestimonials.map((item) => (
             <div
               key={item.id}
-              className="bg-white rounded-3xl p-8 border border-[#E8E1D5] shadow-xs flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
+              className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 border border-[#E8E1D5] shadow-xs flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:-translate-y-1"
             >
               <div>
                 {/* Stars and Quote mark */}

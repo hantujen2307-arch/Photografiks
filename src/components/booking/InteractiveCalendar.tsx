@@ -84,26 +84,26 @@ export default function InteractiveCalendar({
   }
 
   return (
-    <div className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-8 shadow-xs">
+    <div className="bg-white rounded-2xl sm:rounded-3xl border border-[#E8E1D5] p-4 sm:p-6 sm:p-8 shadow-xs">
       {/* Month Navigator */}
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#F4EFE6]">
+      <div className="flex items-center justify-between mb-4 sm:mb-6 pb-3 sm:pb-4 border-b border-[#F4EFE6]">
         <div>
-          <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#846F54] block mb-1">
+          <span className="text-[10px] tracking-[0.2em] uppercase font-semibold text-[#846F54] block mb-0.5 sm:mb-1">
             Pilih Tanggal Sesi
           </span>
-          <h3 className="font-serif text-2xl font-normal text-[#161514]">
+          <h3 className="font-serif text-xl sm:text-2xl font-normal text-[#161514]">
             {MONTH_NAMES[currentMonth]} {currentYear}
           </h3>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1 sm:gap-1.5">
           <button
             type="button"
             onClick={handlePrevMonth}
             disabled={
               currentYear === now.getFullYear() && currentMonth <= now.getMonth()
             }
-            className="w-9 h-9 rounded-full border border-[#E8E1D5] flex items-center justify-center text-[#161514] hover:bg-[#F4EFE6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#E8E1D5] flex items-center justify-center text-[#161514] hover:bg-[#F4EFE6] disabled:opacity-30 disabled:cursor-not-allowed transition-colors active:scale-95"
             aria-label="Bulan sebelumnya"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -111,7 +111,7 @@ export default function InteractiveCalendar({
           <button
             type="button"
             onClick={handleNextMonth}
-            className="w-9 h-9 rounded-full border border-[#E8E1D5] flex items-center justify-center text-[#161514] hover:bg-[#F4EFE6] transition-colors"
+            className="w-8 h-8 sm:w-9 sm:h-9 rounded-full border border-[#E8E1D5] flex items-center justify-center text-[#161514] hover:bg-[#F4EFE6] transition-colors active:scale-95"
             aria-label="Bulan berikutnya"
           >
             <ChevronRight className="w-4 h-4" />
@@ -120,11 +120,11 @@ export default function InteractiveCalendar({
       </div>
 
       {/* Weekday Headers */}
-      <div className="grid grid-cols-7 gap-2 mb-3 text-center">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2 mb-2 sm:mb-3 text-center">
         {DAY_NAMES.map((name, i) => (
           <span
             key={i}
-            className="text-[11px] font-sans uppercase tracking-wider text-[#9A8973] font-semibold py-1"
+            className="text-[10px] sm:text-[11px] font-sans uppercase tracking-wider text-[#9A8973] font-semibold py-0.5 sm:py-1"
           >
             {name}
           </span>
@@ -132,7 +132,7 @@ export default function InteractiveCalendar({
       </div>
 
       {/* Days Grid */}
-      <div className="grid grid-cols-7 gap-1.5 sm:gap-2">
+      <div className="grid grid-cols-7 gap-1 sm:gap-2">
         {days.map((item, idx) => {
           if (!item) {
             return <div key={`empty-${idx}`} className="aspect-square" />;
@@ -147,7 +147,7 @@ export default function InteractiveCalendar({
               disabled={isDisabled}
               onClick={() => onSelectDate(item.dateStr)}
               className={cn(
-                "aspect-square rounded-2xl flex flex-col items-center justify-center text-sm font-medium transition-all duration-200 relative",
+                "aspect-square rounded-xl sm:rounded-2xl flex flex-col items-center justify-center text-xs sm:text-sm font-medium transition-all duration-200 relative",
                 item.isSelected
                   ? "bg-[#161514] text-[#FCFAF6] shadow-md scale-105 z-10"
                   : isDisabled

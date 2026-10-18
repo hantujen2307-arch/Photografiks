@@ -26,11 +26,11 @@ export default function SectionHeading({
       : "text-left items-start";
 
   return (
-    <div className={cn("flex flex-col max-w-3xl mb-12 md:mb-16", alignClass, className)}>
+    <div className={cn("flex flex-col max-w-3xl mb-8 sm:mb-12 md:mb-16", alignClass, className)}>
       {eyebrow && (
         <span
           className={cn(
-            "text-[11px] font-sans tracking-[0.25em] uppercase font-semibold mb-3 px-3.5 py-1 rounded-full inline-block",
+            "text-[10px] sm:text-[11px] font-sans tracking-[0.22em] sm:tracking-[0.25em] uppercase font-semibold mb-2 sm:mb-3 px-3 py-1 sm:px-3.5 sm:py-1 rounded-full inline-block",
             isDark
               ? "bg-white/10 text-[#C9BBA7] border border-white/15"
               : "bg-[#F4EFE6] text-[#846F54] border border-[#E8E1D5]"
@@ -41,7 +41,7 @@ export default function SectionHeading({
       )}
       <h2
         className={cn(
-          "font-serif text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight leading-[1.15]",
+          "font-serif text-2xl sm:text-4xl lg:text-5xl font-normal tracking-tight leading-[1.2] sm:leading-[1.15]",
           isDark ? "text-[#FCFAF6]" : "text-[#161514]"
         )}
       >
@@ -50,7 +50,7 @@ export default function SectionHeading({
       {description && (
         <p
           className={cn(
-            "mt-4 text-sm sm:text-base leading-relaxed font-light",
+            "mt-2.5 sm:mt-4 text-xs sm:text-base leading-relaxed font-light",
             isDark ? "text-[#A9A59E]" : "text-[#6B6862]"
           )}
         >

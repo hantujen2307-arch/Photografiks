@@ -21,7 +21,7 @@ export default function FaqSection({
   const activeFaqs = faqs.filter((f) => f.is_active);
 
   return (
-    <section className="py-20 lg:py-28 bg-[#F4EFE6]/40 border-t border-[#E8E1D5]">
+    <section className="py-12 sm:py-20 lg:py-28 bg-[#F4EFE6]/40 border-t border-[#E8E1D5]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <SectionHeading
           eyebrow="Tanya Jawab"
@@ -29,7 +29,7 @@ export default function FaqSection({
           description="Segala hal yang perlu Anda ketahui mengenai reservasi, persiapan konsep, fasilitas studio, dan alur kerja MOMEN.POTRAIT."
         />
 
-        <div className="space-y-4">
+        <div className="space-y-3 sm:space-y-4">
           {activeFaqs.map((faq, index) => {
             const isOpen = openIndex === index;
             return (
@@ -38,16 +38,16 @@ export default function FaqSection({
                 className={cn(
                   "rounded-2xl border transition-all duration-200 overflow-hidden",
                   isOpen
-                    ? "bg-white border-[#161514]/20 shadow-sm"
+                    ? "bg-white border-[#161514]/20 shadow-xs"
                     : "bg-white/60 border-[#E8E1D5] hover:bg-white"
                 )}
               >
                 <button
                   onClick={() => toggle(index)}
-                  className="w-full text-left px-6 py-5 flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full text-left px-4.5 py-4 sm:px-6 sm:py-5 flex items-center justify-between gap-3 sm:gap-4 cursor-pointer active:scale-99"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-serif text-lg sm:text-xl font-normal text-[#161514]">
+                  <span className="font-serif text-base sm:text-xl font-normal text-[#161514]">
                     {faq.question}
                   </span>
                   <div
