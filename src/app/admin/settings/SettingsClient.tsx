@@ -6,12 +6,18 @@ import {
   CheckCircle2,
   Plus,
   Trash2,
+  Lock,
+  Shield,
+  KeyRound,
+  AlertCircle,
+  Info,
 } from "lucide-react";
 import { SiteSettings, TestimonialItem, FaqItem } from "@/types";
 import { DEFAULT_SITE_SETTINGS, DEFAULT_TESTIMONIALS, DEFAULT_FAQS } from "@/lib/constants";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SettingsClient() {
-  const [activeTab, setActiveTab] = useState<"general" | "contact" | "testimonials" | "faqs">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "contact" | "testimonials" | "faqs" | "security">("general");
 
   const [settings, setSettings] = useState<SiteSettings>(DEFAULT_SITE_SETTINGS);
   const [testimonials, setTestimonials] = useState<TestimonialItem[]>(DEFAULT_TESTIMONIALS);
@@ -21,6 +27,13 @@ export default function SettingsClient() {
   const [saving, setSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Security / Password Change States
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   const fetchSettings = async () => {
     setLoading(true);
@@ -128,6 +141,55 @@ export default function SettingsClient() {
     setFaqs([...faqs, newF]);
   };
 
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (newPassword.length < 6) {
+      setPasswordError("Password baru minimal harus 6 karakter.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("Konfirmasi password baru tidak cocok.");
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    try {
+      const supabase = createClient();
+      if (!supabase) {
+        // Preview mode
+        setPasswordSuccess(
+          "Mode Preview: Simulasi ganti password berhasil! Saat Supabase dihubungkan (.env.local), password baru ini akan langsung aktif di database autentikasi."
+        );
+        setNewPassword("");
+        setConfirmPassword("");
+        return;
+      }
+
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      if (error) {
+        throw new Error(error.message || "Gagal memperbarui password.");
+      }
+
+      setPasswordSuccess(
+        "Password administrator berhasil diperbarui! Silakan gunakan password baru ini untuk login berikutnya."
+      );
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err: unknown) {
+      setPasswordError(err instanceof Error ? err.message : "Terjadi kesalahan saat mengganti password.");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Top Tabs */}
@@ -137,6 +199,7 @@ export default function SettingsClient() {
           { key: "contact", label: "Kontak & Media Sosial" },
           { key: "testimonials", label: "Testimoni Klien" },
           { key: "faqs", label: "Tanya Jawab (FAQ)" },
+          { key: "security", label: "Keamanan & Password" },
         ].map((tab) => (
           <button
             key={tab.key}
@@ -458,6 +521,109 @@ export default function SettingsClient() {
               <Save className="w-4 h-4" />
               <span>{saving ? "Menyimpan..." : "Simpan FAQ"}</span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: Keamanan & Password */}
+      {activeTab === "security" && (
+        <div className="space-y-6">
+          <form
+            onSubmit={handleChangePassword}
+            className="bg-white rounded-3xl border border-[#E8E1D5] p-6 sm:p-8 shadow-xs space-y-6 max-w-2xl"
+          >
+            <div className="border-b border-[#F4EFE6] pb-4 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-2xl bg-[#F4EFE6] text-[#846F54] flex items-center justify-center shrink-0">
+                <KeyRound className="w-5 h-5 stroke-[1.75]" />
+              </div>
+              <div>
+                <h3 className="font-serif text-lg font-medium text-[#161514]">
+                  Ganti Kata Sandi (Password) Admin
+                </h3>
+                <p className="text-xs text-[#6B6862] font-light mt-0.5">
+                  Perbarui kata sandi akun administrator studio MOMEN.POTRAIT Anda secara aman.
+                </p>
+              </div>
+            </div>
+
+            {passwordSuccess && (
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-200">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
+                <span>{passwordSuccess}</span>
+              </div>
+            )}
+
+            {passwordError && (
+              <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-800 text-xs flex items-start gap-2.5 animate-in fade-in duration-200">
+                <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+                <span>{passwordError}</span>
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-[#9A8973] font-semibold mb-2">
+                  Kata Sandi Baru
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-[#846F54] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    placeholder="Minimal 6 karakter..."
+                    className="w-full pl-10 pr-4 py-3 rounded-2xl border border-[#E8E1D5] text-xs bg-[#FCFAF6] focus:bg-white focus:outline-hidden focus:border-[#846F54] transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs uppercase tracking-wider text-[#9A8973] font-semibold mb-2">
+                  Ulangi Kata Sandi Baru
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-[#846F54] absolute left-3.5 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    placeholder="Ketik ulang kata sandi baru..."
+                    className="w-full pl-10 pr-4 py-3 rounded-2xl border border-[#E8E1D5] text-xs bg-[#FCFAF6] focus:bg-white focus:outline-hidden focus:border-[#846F54] transition-all"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-[#F4EFE6] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <span className="text-[11px] text-[#9A8973]">
+                Pastikan kata sandi baru minimal 6 karakter dan mudah diingat.
+              </span>
+              <button
+                type="submit"
+                disabled={passwordLoading}
+                className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-[#161514] text-white text-xs uppercase tracking-wider font-semibold hover:bg-[#2A2926] disabled:opacity-50 transition-all shadow-md"
+              >
+                <Save className="w-4 h-4" />
+                <span>{passwordLoading ? "Menyimpan..." : "Perbarui Kata Sandi"}</span>
+              </button>
+            </div>
+          </form>
+
+          {/* Security Information Card */}
+          <div className="p-6 rounded-3xl bg-[#F4EFE6]/60 border border-[#E8E1D5] max-w-2xl space-y-3">
+            <div className="flex items-center gap-2 text-[#846F54]">
+              <Shield className="w-4 h-4 stroke-[2]" />
+              <span className="text-xs font-semibold uppercase tracking-wider">
+                Catatan Keamanan & Hak Akses
+              </span>
+            </div>
+            <p className="text-xs text-[#6B6862] leading-relaxed">
+              Kata sandi ini melindungi dashboard studio Anda. Anda juga dapat mereset atau mengubah kata sandi akun kapan saja secara langsung melalui dashboard Supabase di menu <strong>Authentication &rarr; Users</strong>.
+            </p>
           </div>
         </div>
       )}
