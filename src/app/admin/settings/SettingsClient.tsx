@@ -225,7 +225,7 @@ export default function SettingsClient() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
               <label className="block text-xs uppercase tracking-wider text-[#4B4944] font-semibold mb-2">
-                Nomor WhatsApp Resmi (Contoh: 6281234567890) *
+                Nomor WhatsApp Resmi (Contoh: 6285157335443) *
               </label>
               <input
                 type="text"

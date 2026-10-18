@@ -42,7 +42,7 @@ interface BookingWizardProps {
 
 export default function BookingWizard({
   packages,
-  defaultSettingsWhatsapp = "6281234567890",
+  defaultSettingsWhatsapp = "6285157335443",
 }: BookingWizardProps) {
   const searchParams = useSearchParams();
   const preselectedPkgId = searchParams.get("package");

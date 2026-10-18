@@ -481,7 +481,7 @@ VALUES
   ('hero_subheadline', '"Studio fotografi editorial & portrait di Jakarta. Menghadirkan karya visual yang intim, abadi, dan bercerita tentang jati diri Anda."'::jsonb),
   ('studio_name', '"MOMEN.POTRAIT"'::jsonb),
   ('studio_address', '"Jl. Senopati No. 42, Kebayoran Baru, Jakarta Selatan 12190"'::jsonb),
-  ('whatsapp_number', '"6281234567890"'::jsonb),
+  ('whatsapp_number', '"6285157335443"'::jsonb),
   ('instagram_username', '"@momen.potrait"'::jsonb),
   ('email_contact', '"hello@momenpotrait.com"'::jsonb),
   ('operating_hours_text', '"Senin – Minggu: 09:00 – 19:00 WIB"'::jsonb)

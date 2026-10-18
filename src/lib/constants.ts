@@ -6,7 +6,7 @@ export const DEFAULT_SITE_SETTINGS: SiteSettings = {
   studio_name: "MOMEN.POTRAIT",
   studio_tagline: "Editorial & Timeless Portrait Studio",
   studio_address: "Jl. Senopati No. 42, Kebayoran Baru, Jakarta Selatan 12190",
-  whatsapp_number: "6281234567890",
+  whatsapp_number: "6285157335443",
   instagram_username: "@momen.potrait",
   tiktok_username: "@momenpotrait.studio",
   email_contact: "hello@momenpotrait.com",

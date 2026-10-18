@@ -250,7 +250,7 @@ function StatusContent() {
           <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <a
               href={createWhatsAppUrl(
-                "6281234567890",
+                "6285157335443",
                 `Halo Admin MOMEN.POTRAIT, saya ingin menanyakan status booking *${booking.booking_reference}* atas nama *${booking.customer_name}*.`
               )}
               target="_blank"
