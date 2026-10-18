@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getPublicSupabase } from "@/lib/supabase/public";
 import { DEFAULT_PACKAGES, DEFAULT_BUSINESS_HOURS } from "@/lib/constants";
 import { getStoredPackages } from "@/lib/data/packages-store";
+import { getStoredBlockedDates, getStoredBlockedSlots } from "@/lib/data/calendar-store";
 import { timeToMinutes, minutesToTime } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -84,21 +85,33 @@ export async function GET(request: NextRequest) {
       if (blockedDateData) {
         isDateBlocked = true;
       }
+      if (!isDateBlocked) {
+        const storedBlockedDates = getStoredBlockedDates();
+        if (storedBlockedDates.some((b) => b.blocked_date === date)) {
+          isDateBlocked = true;
+        }
+      }
 
-      // Fetch blocked slots
+      // Fetch blocked slots from Supabase or persistent fallback
       const { data: blockedSlotData } = await sb
         .from("blocked_slots")
         .select("start_time, end_time")
         .eq("slot_date", date);
 
-      if (blockedSlotData) {
-        blockedSlotData.forEach((s: any) => {
-          bookedRanges.push({
-            start: timeToMinutes(s.start_time),
-            end: timeToMinutes(s.end_time),
-          });
-        });
+      const combinedSlots: Array<{ start_time: string; end_time: string }> = [];
+      if (blockedSlotData && blockedSlotData.length > 0) {
+        combinedSlots.push(...blockedSlotData);
+      } else {
+        const storedSlots = getStoredBlockedSlots().filter((s) => s.slot_date === date);
+        combinedSlots.push(...storedSlots);
       }
+
+      combinedSlots.forEach((s) => {
+        bookedRanges.push({
+          start: timeToMinutes(s.start_time),
+          end: timeToMinutes(s.end_time),
+        });
+      });
 
       // Fetch active bookings (pending & confirmed)
       const { data: bookingsData } = await sb

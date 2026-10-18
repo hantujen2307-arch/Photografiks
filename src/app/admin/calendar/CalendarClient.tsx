@@ -93,6 +93,9 @@ export default function CalendarClient() {
         });
         if (res.ok) {
           setBlockedDates((prev) => prev.filter((b) => b.id !== existing.id));
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          alert(errData.error || "Gagal membuka blokir tanggal.");
         }
       } else {
         // Block
@@ -108,10 +111,13 @@ export default function CalendarClient() {
         const data = await res.json();
         if (res.ok && data.blockedDate) {
           setBlockedDates((prev) => [...prev, data.blockedDate]);
+        } else {
+          alert(data.error || "Gagal memblokir tanggal.");
         }
       }
     } catch (err) {
       console.error("Toggle block date error:", err);
+      alert("Terjadi kesalahan saat memproses tanggal.");
     }
   };
 
@@ -152,9 +158,13 @@ export default function CalendarClient() {
       });
       if (res.ok) {
         setBlockedSlots((prev) => prev.filter((s) => s.id !== id));
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        alert(errData.error || "Gagal membuka blokir slot jam.");
       }
     } catch (err) {
       console.error("Delete slot error:", err);
+      alert("Terjadi kesalahan saat menghapus blokir slot.");
     }
   };
 

@@ -1,9 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createAdminSupabaseClient } from "@/lib/supabase/admin";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { verifyAdminSession } from "@/lib/auth/admin-guard";
 import { timeToMinutes } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
+
+async function getSupabaseClient() {
+  const adminClient = createAdminSupabaseClient();
+  if (adminClient) return adminClient;
+  return await createServerSupabaseClient();
+}
 
 export async function GET(request: NextRequest) {
   const auth = await verifyAdminSession();
@@ -16,7 +23,7 @@ export async function GET(request: NextRequest) {
   const query = searchParams.get("q");
   const date = searchParams.get("date");
 
-  const supabase = await createServerSupabaseClient();
+  const supabase = await getSupabaseClient();
   if (!supabase) {
     return NextResponse.json({ bookings: [] });
   }
@@ -60,7 +67,7 @@ export async function PATCH(request: NextRequest) {
       return NextResponse.json({ error: "ID booking diperlukan" }, { status: 400 });
     }
 
-    const supabase = await createServerSupabaseClient();
+    const supabase = await getSupabaseClient();
     if (!supabase) {
       return NextResponse.json({ success: true, updated: body });
     }

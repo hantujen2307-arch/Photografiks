@@ -390,6 +390,11 @@ CREATE POLICY "Admin manage blocked dates"
   TO authenticated
   USING (public.is_admin());
 
+CREATE POLICY "Public read blocked slots"
+  ON public.blocked_slots FOR SELECT
+  TO public
+  USING (true);
+
 CREATE POLICY "Admin manage blocked slots"
   ON public.blocked_slots FOR ALL
   TO authenticated
