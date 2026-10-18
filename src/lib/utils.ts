@@ -71,3 +71,68 @@ export function createWhatsAppUrl(phone: string, text: string): string {
   const cleaned = cleanWhatsAppNumber(phone);
   return `https://wa.me/${cleaned}?text=${encodeURIComponent(text)}`;
 }
+
+export function formatDateTimeIndonesian(date: Date = new Date()): string {
+  try {
+    const dateFormatted = new Intl.DateTimeFormat("id-ID", {
+      weekday: "long",
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    }).format(date);
+
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${dateFormatted}, ${hours}:${minutes} WIB`;
+  } catch {
+    return date.toLocaleString("id-ID");
+  }
+}
+
+export interface WhatsAppBookingParams {
+  bookingReference: string;
+  orderDateTime: string;
+  customerName: string;
+  customerWhatsapp: string;
+  packageName: string;
+  packageDuration: number;
+  sessionDate: string;
+  startTime: string;
+  endTime: string;
+  sessionLocation: string;
+  price: number;
+  notes?: string;
+}
+
+export function generateWhatsAppBookingMessage(params: WhatsAppBookingParams): string {
+  const notesText = params.notes?.trim() ? `"${params.notes.trim()}"` : "-";
+  const formattedSessionDate = formatDateIndonesian(params.sessionDate);
+  const formattedStartTime = formatTimeShort(params.startTime);
+  const formattedEndTime = formatTimeShort(params.endTime);
+  const formattedPrice = formatIDR(params.price);
+
+  return [
+    "Halo MOMEN.POTRAIT, saya ingin melakukan pemesanan sesi foto studio:",
+    "",
+    "📋 *DETAIL RESERVASI MOMEN.POTRAIT*",
+    "━━━━━━━━━━━━━━━━━━━━",
+    `• *No. Referensi:* ${params.bookingReference}`,
+    `• *Tanggal Order:* ${params.orderDateTime}`,
+    `• *Nama Pelanggan:* ${params.customerName}`,
+    `• *No. WhatsApp:* ${params.customerWhatsapp || "-"}`,
+    "",
+    "📸 *PAKET & JADWAL SESI*",
+    `• *Paket:* ${params.packageName} (${params.packageDuration} Menit)`,
+    `• *Tanggal Sesi:* ${formattedSessionDate}`,
+    `• *Jam Sesi:* ${formattedStartTime} - ${formattedEndTime} WIB`,
+    `• *Lokasi:* ${params.sessionLocation}`,
+    `• *Total Investasi:* ${formattedPrice}`,
+    "",
+    "📝 *Catatan / Konsep:*",
+    notesText,
+    "━━━━━━━━━━━━━━━━━━━━",
+    "Mohon info nomor rekening untuk DP dan konfirmasi jadwalnya. Terima kasih!",
+  ].join("\n");
+}
+
