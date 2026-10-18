@@ -1,0 +1,83 @@
+[
+  {
+    "id": "port-1",
+    "title": "Aura of Serenity",
+    "category": "Portrait",
+    "image_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=80",
+    "description": "Sesi potret editorial dengan permainan pencahayaan lembut bernuansa hangat.",
+    "is_featured": true,
+    "sort_order": 1
+  },
+  {
+    "id": "port-2",
+    "title": "Timeless Devotion",
+    "category": "Couple",
+    "image_url": "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=1200&q=80",
+    "description": "Kisah cinta monokromatik yang menonjolkan kedekatan emosi tulus dua insan.",
+    "is_featured": true,
+    "sort_order": 2
+  },
+  {
+    "id": "port-3",
+    "title": "Summit of Triumph",
+    "category": "Graduation",
+    "image_url": "https://images.unsplash.com/photo-1627556704290-2b1f5853ff78?auto=format&fit=crop&w=1200&q=80",
+    "description": "Perayaan kelulusan berkelas dengan sentuhan editorial modern dan kebanggaan keluarga.",
+    "is_featured": true,
+    "sort_order": 3
+  },
+  {
+    "id": "port-4",
+    "title": "Golden Kinship",
+    "category": "Family",
+    "image_url": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1200&q=80",
+    "description": "Potret keluarga tiga generasi dalam suasana studio yang hangat dan cair.",
+    "is_featured": true,
+    "sort_order": 4
+  },
+  {
+    "id": "port-5",
+    "title": "Monochrome Gaze",
+    "category": "Portrait",
+    "image_url": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80",
+    "description": "Potret ekspresi maskulin dengan kontras tegas dan detail tajam.",
+    "is_featured": true,
+    "sort_order": 5
+  },
+  {
+    "id": "port-6",
+    "title": "Quiet Symphony",
+    "category": "Editorial",
+    "image_url": "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80",
+    "description": "Eksplorasi siluet dan tekstur busana kontemporer dalam studio berlatar netral.",
+    "is_featured": true,
+    "sort_order": 6
+  },
+  {
+    "id": "port-7",
+    "title": "Eternal Promise",
+    "category": "Couple",
+    "image_url": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+    "description": "Sesi pre-wedding minimalis bergaya sinematik Eropa.",
+    "is_featured": false,
+    "sort_order": 7
+  },
+  {
+    "id": "port-8",
+    "title": "Joyous Milestone",
+    "category": "Graduation",
+    "image_url": "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80",
+    "description": "Momen kelulusan bersama sahabat dengan tawa lepas dan energi positif.",
+    "is_featured": false,
+    "sort_order": 8
+  },
+  {
+    "id": "port-9",
+    "title": "Gala Evening Intimacy",
+    "category": "Event",
+    "image_url": "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=1200&q=80",
+    "description": "Dokumentasi perayaan privat bernuansa hangat dengan pencahayaan lilin dramatis.",
+    "is_featured": false,
+    "sort_order": 9
+  }
+]

@@ -7,8 +7,8 @@ import PackagesSection from "@/components/home/PackagesSection";
 import FaqSection from "@/components/home/FaqSection";
 import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
 import { getStoredPackages } from "@/lib/data/packages-store";
+import { getStoredPortfolio } from "@/lib/data/portfolio-store";
 import {
-  DEFAULT_PORTFOLIO,
   DEFAULT_FAQS,
   DEFAULT_SITE_SETTINGS,
 } from "@/lib/constants";
@@ -18,7 +18,7 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   let packages = getStoredPackages();
-  let portfolio = DEFAULT_PORTFOLIO;
+  let portfolio = getStoredPortfolio();
   let faqs = DEFAULT_FAQS;
   let settings = DEFAULT_SITE_SETTINGS;
 
@@ -47,7 +47,7 @@ export default async function HomePage() {
         fetchAllData,
         [
           { data: packages },
-          { data: DEFAULT_PORTFOLIO },
+          { data: portfolio },
           { data: DEFAULT_FAQS },
           { data: [] },
         ] as any,

@@ -3,7 +3,8 @@ import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import FeaturedPortfolio from "@/components/home/FeaturedPortfolio";
 import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
-import { DEFAULT_PORTFOLIO, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
+import { getStoredPortfolio } from "@/lib/data/portfolio-store";
+import { DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import Link from "next/link";
 import { ArrowRight, Sparkles } from "lucide-react";
 
@@ -16,7 +17,7 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function PortfolioPage() {
-  let portfolio = DEFAULT_PORTFOLIO;
+  let portfolio = getStoredPortfolio();
   const settings = DEFAULT_SITE_SETTINGS;
 
   try {
@@ -29,7 +30,7 @@ export default async function PortfolioPage() {
 
       const { data } = await withTimeout(
         fetchPortfolio as any,
-        { data: DEFAULT_PORTFOLIO },
+        { data: portfolio },
         1500
       );
 

@@ -202,6 +202,11 @@ export default function PackagesClient() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Gagal menyimpan perubahan paket.");
+        if (data.package) {
+          setPackages((prev) =>
+            prev.map((p) => (p.id === editingPackage.id ? data.package : p))
+          );
+        }
         setSaveSuccess(`Paket "${name}" dan fotonya berhasil diperbarui!`);
       } else {
         const res = await fetch("/api/admin/packages", {
@@ -211,6 +216,9 @@ export default function PackagesClient() {
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Gagal membuat paket baru.");
+        if (data.package) {
+          setPackages((prev) => [data.package, ...prev]);
+        }
         setSaveSuccess(`Paket baru "${name}" berhasil dibuat dan disimpan!`);
       }
 
