@@ -1,4 +1,8 @@
 import { createClient } from "@supabase/supabase-js";
+import {
+  getSanitizedSupabaseUrl,
+  getSanitizedSupabaseAnonKey,
+} from "./config";
 
 /**
  * Public Supabase client for reading public data (packages, portfolio, testimonials, settings, faqs).
@@ -7,8 +11,8 @@ import { createClient } from "@supabase/supabase-js";
 let cachedPublicClient: ReturnType<typeof createClient> | null = null;
 
 export function getPublicSupabase() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const supabaseUrl = getSanitizedSupabaseUrl();
+  const supabaseAnonKey = getSanitizedSupabaseAnonKey();
 
   if (!supabaseUrl || !supabaseAnonKey) {
     return null;
@@ -19,6 +23,14 @@ export function getPublicSupabase() {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
+      },
+      global: {
+        fetch: (url, options) => {
+          return fetch(url, {
+            ...options,
+            signal: options?.signal || AbortSignal.timeout(6000),
+          });
+        },
       },
     });
   }

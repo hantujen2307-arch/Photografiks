@@ -86,6 +86,7 @@ export default function PackagesClient() {
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [price, setPrice] = useState(850000);
   const [duration, setDuration] = useState(60);
   const [photoCountText, setPhotoCountText] = useState("");
@@ -121,6 +122,7 @@ export default function PackagesClient() {
     setEditingPackage(null);
     setName("");
     setTagline("");
+    setSelectedFile(null);
     setImageUrl(STUDIO_PHOTO_PRESETS[0].url);
     setPrice(1000000);
     setDuration(60);
@@ -136,6 +138,7 @@ export default function PackagesClient() {
     setEditingPackage(pkg);
     setName(pkg.name);
     setTagline(pkg.tagline || "");
+    setSelectedFile(null);
     setImageUrl(pkg.image_url || "");
     setPrice(pkg.price);
     setDuration(pkg.duration_minutes);
@@ -147,7 +150,7 @@ export default function PackagesClient() {
     setIsModalOpen(true);
   };
 
-  // Handle local image file upload (converts to Data URL for instant storage & preview)
+  // Handle local image file selection (instant object URL preview without heavy base64 bloat)
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -157,18 +160,13 @@ export default function PackagesClient() {
       return;
     }
 
-    if (file.size > 8 * 1024 * 1024) {
-      alert("Ukuran gambar maksimal 8MB.");
+    if (file.size > 10 * 1024 * 1024) {
+      alert("Ukuran gambar maksimal 10MB.");
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (typeof event.target?.result === "string") {
-        setImageUrl(event.target.result);
-      }
-    };
-    reader.readAsDataURL(file);
+    setSelectedFile(file);
+    setImageUrl(URL.createObjectURL(file));
   };
 
   const handleSave = async (e: React.FormEvent) => {
@@ -181,24 +179,30 @@ export default function PackagesClient() {
       .map((f) => f.trim())
       .filter(Boolean);
 
-    const payload = {
-      name,
-      tagline,
-      image_url: imageUrl,
-      price: Number(price),
-      duration_minutes: Number(duration),
-      photo_count_text: photoCountText,
-      features: featuresArray,
-      is_active: isActive,
-      sort_order: Number(sortOrder),
-    };
+    const formData = new FormData();
+    formData.append("name", name);
+    formData.append("tagline", tagline);
+    formData.append("price", String(price));
+    formData.append("duration_minutes", String(duration));
+    formData.append("photo_count_text", photoCountText);
+    formData.append("features", JSON.stringify(featuresArray));
+    formData.append("is_active", String(isActive));
+    formData.append("sort_order", String(sortOrder));
+
+    if (selectedFile) {
+      formData.append("file", selectedFile);
+    } else if (imageUrl && !imageUrl.startsWith("blob:")) {
+      formData.append("image_url", imageUrl);
+    } else if (editingPackage) {
+      formData.append("image_url", editingPackage.image_url || "");
+    }
 
     try {
       if (editingPackage) {
+        formData.append("id", editingPackage.id);
         const res = await fetch("/api/admin/packages", {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ id: editingPackage.id, ...payload }),
+          body: formData,
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Gagal menyimpan perubahan paket.");
@@ -211,8 +215,7 @@ export default function PackagesClient() {
       } else {
         const res = await fetch("/api/admin/packages", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
+          body: formData,
         });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Gagal membuat paket baru.");
@@ -579,9 +582,20 @@ export default function PackagesClient() {
                         Klik di sini untuk memilih foto dari galeri HP atau komputer Anda
                       </span>
                       <span className="text-[10px] text-[#9A8973] mt-1 block">
-                        Mendukung JPG, PNG, WEBP (Maksimal 8MB)
+                        Mendukung JPG, PNG, WEBP (Maksimal 10MB)
                       </span>
                     </div>
+
+                    {selectedFile && (
+                      <div className="flex items-center justify-between px-3 py-2 bg-[#F5F2EB] border border-[#E8E1D5] rounded-xl text-xs">
+                        <span className="font-medium text-[#161514] truncate max-w-[220px]">
+                          📎 {selectedFile.name}
+                        </span>
+                        <span className="text-[10px] text-[#846F54] font-medium">
+                          {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )}
 
@@ -597,7 +611,10 @@ export default function PackagesClient() {
                         return (
                           <div
                             key={idx}
-                            onClick={() => setImageUrl(preset.url)}
+                            onClick={() => {
+                              setImageUrl(preset.url);
+                              setSelectedFile(null);
+                            }}
                             className={`relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer border-2 transition-all ${
                               isSelected
                                 ? "border-[#161514] ring-2 ring-[#B8976C] scale-[0.98]"
@@ -633,7 +650,10 @@ export default function PackagesClient() {
                     <input
                       type="url"
                       value={imageUrl}
-                      onChange={(e) => setImageUrl(e.target.value)}
+                      onChange={(e) => {
+                        setImageUrl(e.target.value);
+                        setSelectedFile(null);
+                      }}
                       placeholder="https://images.unsplash.com/photo-..."
                       className="w-full px-4 py-2.5 rounded-xl border border-[#E8E1D5] text-xs bg-white focus:outline-hidden focus:border-[#161514]"
                     />
@@ -650,7 +670,11 @@ export default function PackagesClient() {
                       </span>
                       <button
                         type="button"
-                        onClick={() => setImageUrl("")}
+                        onClick={() => {
+                          setImageUrl("");
+                          setSelectedFile(null);
+                          if (fileInputRef.current) fileInputRef.current.value = "";
+                        }}
                         className="text-[11px] text-red-600 hover:underline font-medium"
                       >
                         Hapus Foto
@@ -661,7 +685,7 @@ export default function PackagesClient() {
                         src={imageUrl}
                         alt="Preview Foto Cover Paket"
                         fill
-                        unoptimized={imageUrl.startsWith("data:")}
+                        unoptimized={imageUrl.startsWith("data:") || imageUrl.startsWith("blob:")}
                         className="object-cover"
                       />
                     </div>

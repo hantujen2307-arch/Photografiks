@@ -19,48 +19,78 @@ async function getSupabaseClient() {
 }
 
 /**
- * If imageUrl is a base64 Data URL and Supabase is connected,
- * upload it to Supabase Storage (bucket: 'portfolio') to get a clean CDN public URL.
+ * Upload binary file or base64 Data URL to Supabase Storage bucket 'portfolio'.
  */
-async function processImageUrlForStorage(
+async function uploadPackageImage(
   supabase: any,
-  imageUrl?: string
-): Promise<string | undefined> {
-  if (!imageUrl || !imageUrl.startsWith("data:image/") || !supabase) {
-    return imageUrl;
+  fileOrDataUrl: File | string
+): Promise<{ url?: string; error?: string }> {
+  if (!supabase) {
+    return { error: "Supabase client tidak tersedia." };
   }
 
   try {
-    const matches = imageUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
-    if (!matches) return imageUrl;
+    let buffer: Buffer;
+    let ext = "jpg";
+    let contentType = "image/jpeg";
 
-    const rawExt = matches[1];
-    const ext = rawExt.includes("png") ? "png" : rawExt.includes("webp") ? "webp" : "jpg";
-    const base64Data = matches[2];
-    const buffer = Buffer.from(base64Data, "base64");
+    if (typeof fileOrDataUrl === "string") {
+      const matches = fileOrDataUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+      if (!matches) {
+        return { url: fileOrDataUrl }; // Standard URL, no upload needed
+      }
+      const rawExt = matches[1];
+      ext = rawExt.includes("png") ? "png" : rawExt.includes("webp") ? "webp" : "jpg";
+      contentType = `image/${ext}`;
+      buffer = Buffer.from(matches[2], "base64");
+    } else {
+      const fileExt = fileOrDataUrl.name.split(".").pop() || "jpg";
+      ext = fileExt.toLowerCase().replace(/[^a-z0-9]/g, "");
+      contentType = fileOrDataUrl.type || `image/${ext}`;
+      const arrayBuffer = await fileOrDataUrl.arrayBuffer();
+      buffer = Buffer.from(arrayBuffer);
+    }
+
     const filePath = `packages/${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${ext}`;
 
-    const { error: uploadError } = await supabase.storage
+    let { error: uploadError } = await supabase.storage
       .from("portfolio")
       .upload(filePath, buffer, {
-        contentType: `image/${ext}`,
+        contentType,
         cacheControl: "3600",
         upsert: false,
       });
 
+    // If bucket doesn't exist, create it and retry upload
+    if (uploadError && (uploadError.message?.toLowerCase().includes("not found") || uploadError.message?.toLowerCase().includes("bucket"))) {
+      try {
+        await supabase.storage.createBucket("portfolio", { public: true });
+        const retry = await supabase.storage
+          .from("portfolio")
+          .upload(filePath, buffer, {
+            contentType,
+            cacheControl: "3600",
+            upsert: false,
+          });
+        uploadError = retry.error;
+      } catch (bucketErr) {
+        console.warn("[BUCKET_CREATE_RETRY_WARNING]", bucketErr);
+      }
+    }
+
     if (uploadError) {
-      console.warn("Storage upload for package image warning:", uploadError.message);
-      return imageUrl;
+      console.error("[STORAGE_UPLOAD_ERROR]", uploadError);
+      return { error: `Gagal mengunggah foto paket ke Storage: ${uploadError.message}` };
     }
 
     const {
       data: { publicUrl },
     } = supabase.storage.from("portfolio").getPublicUrl(filePath);
 
-    return publicUrl || imageUrl;
-  } catch (err) {
-    console.warn("Error uploading data URL to storage:", err);
-    return imageUrl;
+    return { url: publicUrl || undefined };
+  } catch (err: unknown) {
+    console.error("[STORAGE_UPLOAD_EXCEPTION]", err);
+    return { error: err instanceof Error ? err.message : "Gagal memproses file gambar." };
   }
 }
 
@@ -96,18 +126,49 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const {
-      name,
-      tagline,
-      image_url,
-      price,
-      duration_minutes,
-      photo_count_text,
-      features,
-      is_active,
-      sort_order,
-    } = body;
+    const contentType = request.headers.get("content-type") || "";
+    let name = "";
+    let tagline = "";
+    let price = 0;
+    let duration_minutes = 60;
+    let photo_count_text = "";
+    let features: string[] = [];
+    let is_active = true;
+    let sort_order = 0;
+    let directImageUrl: string | undefined;
+    let file: File | null = null;
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      name = (formData.get("name") as string) || "";
+      tagline = (formData.get("tagline") as string) || "";
+      price = Number(formData.get("price") || 0);
+      duration_minutes = Number(formData.get("duration_minutes") || 60);
+      photo_count_text = (formData.get("photo_count_text") as string) || "";
+      const rawFeatures = formData.get("features");
+      if (typeof rawFeatures === "string") {
+        try {
+          features = JSON.parse(rawFeatures);
+        } catch {
+          features = rawFeatures.split("\n").map((f) => f.trim()).filter(Boolean);
+        }
+      }
+      is_active = formData.get("is_active") === "true";
+      sort_order = Number(formData.get("sort_order") || 0);
+      file = formData.get("file") as File | null;
+      directImageUrl = (formData.get("image_url") as string) || undefined;
+    } else {
+      const body = await request.json();
+      name = body.name || "";
+      tagline = body.tagline || "";
+      price = Number(body.price || 0);
+      duration_minutes = Number(body.duration_minutes || 60);
+      photo_count_text = body.photo_count_text || "";
+      features = Array.isArray(body.features) ? body.features : [];
+      is_active = body.is_active ?? true;
+      sort_order = Number(body.sort_order || 0);
+      directImageUrl = body.image_url;
+    }
 
     if (!name || price === undefined || !duration_minutes) {
       return NextResponse.json(
@@ -117,7 +178,24 @@ export async function POST(request: NextRequest) {
     }
 
     const supabase = await getSupabaseClient();
-    const processedImageUrl = await processImageUrlForStorage(supabase, image_url);
+    let finalImageUrl = directImageUrl || "";
+
+    // Upload to Supabase Storage if file attached or Data URL provided
+    if (supabase) {
+      if (file && file.size > 0) {
+        const uploadResult = await uploadPackageImage(supabase, file);
+        if (uploadResult.error) {
+          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+        }
+        if (uploadResult.url) finalImageUrl = uploadResult.url;
+      } else if (directImageUrl && directImageUrl.startsWith("data:image/")) {
+        const uploadResult = await uploadPackageImage(supabase, directImageUrl);
+        if (uploadResult.error) {
+          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+        }
+        if (uploadResult.url) finalImageUrl = uploadResult.url;
+      }
+    }
 
     const slug = name
       .toLowerCase()
@@ -128,7 +206,7 @@ export async function POST(request: NextRequest) {
       slug: slug + "-" + Date.now().toString(36),
       name,
       tagline: tagline || "",
-      image_url: processedImageUrl || "",
+      image_url: finalImageUrl || "",
       price: Number(price),
       duration_minutes: Number(duration_minutes),
       photo_count_text: photo_count_text || "Semua File Asli",
@@ -140,21 +218,30 @@ export async function POST(request: NextRequest) {
     let resultPackage: any = null;
 
     if (supabase) {
-      const { data: inserted, error: insertError } = await supabase
-        .from("packages")
-        .insert(newPackageData)
-        .select()
-        .single();
+      try {
+        const { data: inserted, error: insertError } = await supabase
+          .from("packages")
+          .insert(newPackageData)
+          .select()
+          .single();
 
-      if (insertError) {
-        console.error("[SUPABASE_PACKAGE_INSERT_ERROR]", insertError);
+        if (insertError) {
+          console.error("[SUPABASE_PACKAGE_INSERT_ERROR]", insertError);
+          return NextResponse.json(
+            { error: "Gagal menyimpan paket ke database: " + insertError.message },
+            { status: 500 }
+          );
+        }
+
+        resultPackage = inserted;
+      } catch (err: unknown) {
+        console.error("[SUPABASE_INSERT_EXCEPTION]", err);
+        const msg = err instanceof Error ? err.message : String(err);
         return NextResponse.json(
-          { error: "Gagal menyimpan paket ke database: " + insertError.message },
+          { error: `Gagal menghubungi database Supabase (${msg}).` },
           { status: 500 }
         );
       }
-
-      resultPackage = inserted;
     }
 
     const createdLocally = createStoredPackage(resultPackage || newPackageData);
@@ -187,19 +274,54 @@ export async function PUT(request: NextRequest) {
   }
 
   try {
-    const body = await request.json();
-    const {
-      id,
-      name,
-      tagline,
-      image_url,
-      price,
-      duration_minutes,
-      photo_count_text,
-      features,
-      is_active,
-      sort_order,
-    } = body;
+    const contentType = request.headers.get("content-type") || "";
+    let id = "";
+    let name: string | undefined;
+    let tagline: string | undefined;
+    let price: number | undefined;
+    let duration_minutes: number | undefined;
+    let photo_count_text: string | undefined;
+    let features: string[] | undefined;
+    let is_active: boolean | undefined;
+    let sort_order: number | undefined;
+    let directImageUrl: string | undefined;
+    let file: File | null = null;
+
+    if (contentType.includes("multipart/form-data")) {
+      const formData = await request.formData();
+      id = (formData.get("id") as string) || "";
+      if (formData.has("name")) name = formData.get("name") as string;
+      if (formData.has("tagline")) tagline = formData.get("tagline") as string;
+      if (formData.has("price")) price = Number(formData.get("price"));
+      if (formData.has("duration_minutes")) duration_minutes = Number(formData.get("duration_minutes"));
+      if (formData.has("photo_count_text")) photo_count_text = formData.get("photo_count_text") as string;
+      if (formData.has("features")) {
+        const rawFeatures = formData.get("features");
+        if (typeof rawFeatures === "string") {
+          try {
+            features = JSON.parse(rawFeatures);
+          } catch {
+            features = rawFeatures.split("\n").map((f) => f.trim()).filter(Boolean);
+          }
+        }
+      }
+      if (formData.has("is_active")) is_active = formData.get("is_active") === "true";
+      if (formData.has("sort_order")) sort_order = Number(formData.get("sort_order"));
+      if (formData.has("image_url")) directImageUrl = formData.get("image_url") as string;
+      file = formData.get("file") as File | null;
+    } else {
+      const body = await request.json();
+      id = body.id || "";
+      name = body.name;
+      tagline = body.tagline;
+      if (body.price !== undefined) price = Number(body.price);
+      if (body.duration_minutes !== undefined) duration_minutes = Number(body.duration_minutes);
+      photo_count_text = body.photo_count_text;
+      if (body.features !== undefined) features = Array.isArray(body.features) ? body.features : [];
+      if (body.is_active !== undefined) is_active = body.is_active;
+      if (body.sort_order !== undefined) sort_order = Number(body.sort_order);
+      directImageUrl = body.image_url;
+    }
 
     if (!id) {
       return NextResponse.json(
@@ -209,41 +331,77 @@ export async function PUT(request: NextRequest) {
     }
 
     const supabase = await getSupabaseClient();
-    const processedImageUrl = await processImageUrlForStorage(supabase, image_url);
+    let finalImageUrl = directImageUrl;
+
+    // Upload to Supabase Storage if file attached or Data URL provided
+    if (supabase) {
+      if (file && file.size > 0) {
+        const uploadResult = await uploadPackageImage(supabase, file);
+        if (uploadResult.error) {
+          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+        }
+        if (uploadResult.url) finalImageUrl = uploadResult.url;
+      } else if (directImageUrl && directImageUrl.startsWith("data:image/")) {
+        const uploadResult = await uploadPackageImage(supabase, directImageUrl);
+        if (uploadResult.error) {
+          return NextResponse.json({ error: uploadResult.error }, { status: 500 });
+        }
+        if (uploadResult.url) finalImageUrl = uploadResult.url;
+      }
+    }
 
     const updateData: Record<string, unknown> = {};
     if (name !== undefined) updateData.name = name;
     if (tagline !== undefined) updateData.tagline = tagline;
-    if (processedImageUrl !== undefined) updateData.image_url = processedImageUrl;
-    if (price !== undefined) updateData.price = Number(price);
-    if (duration_minutes !== undefined)
-      updateData.duration_minutes = Number(duration_minutes);
-    if (photo_count_text !== undefined)
-      updateData.photo_count_text = photo_count_text;
-    if (features !== undefined)
-      updateData.features = Array.isArray(features) ? features : [];
+    if (finalImageUrl !== undefined && !finalImageUrl.startsWith("blob:")) {
+      updateData.image_url = finalImageUrl;
+    }
+    if (price !== undefined) updateData.price = price;
+    if (duration_minutes !== undefined) updateData.duration_minutes = duration_minutes;
+    if (photo_count_text !== undefined) updateData.photo_count_text = photo_count_text;
+    if (features !== undefined) updateData.features = features;
     if (is_active !== undefined) updateData.is_active = is_active;
-    if (sort_order !== undefined) updateData.sort_order = Number(sort_order);
+    if (sort_order !== undefined) updateData.sort_order = sort_order;
 
     let returnedPackage: any = null;
 
     if (supabase) {
-      const { data: updated, error: updateError } = await supabase
-        .from("packages")
-        .update(updateData)
-        .eq("id", id)
-        .select()
-        .single();
+      try {
+        const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        let updateQuery = supabase.from("packages").update(updateData);
 
-      if (updateError) {
-        console.error("[SUPABASE_PACKAGE_UPDATE_ERROR]", updateError);
+        if (isUuid) {
+          updateQuery = updateQuery.eq("id", id);
+        } else {
+          // If id is not a standard UUID (e.g. 'pkg-2'), safely target by name or slug
+          if (name) {
+            updateQuery = updateQuery.eq("name", name);
+          } else {
+            updateQuery = updateQuery.eq("id", id);
+          }
+        }
+
+        const { data: updated, error: updateError } = await updateQuery
+          .select()
+          .maybeSingle();
+
+        if (updateError) {
+          console.error("[SUPABASE_PACKAGE_UPDATE_ERROR]", updateError);
+          return NextResponse.json(
+            { error: "Gagal memperbarui database: " + updateError.message },
+            { status: 500 }
+          );
+        }
+
+        returnedPackage = updated;
+      } catch (err: unknown) {
+        console.error("[SUPABASE_UPDATE_EXCEPTION]", err);
+        const msg = err instanceof Error ? err.message : String(err);
         return NextResponse.json(
-          { error: "Gagal memperbarui database: " + updateError.message },
+          { error: `Gagal memperbarui database: ${msg}` },
           { status: 500 }
         );
       }
-
-      returnedPackage = updated;
     }
 
     // Update in persistent local file storage
@@ -292,9 +450,12 @@ export async function DELETE(request: NextRequest) {
 
     const supabase = await getSupabaseClient();
     if (supabase) {
-      const { error } = await supabase.from("packages").delete().eq("id", id);
-      if (error) {
-        return NextResponse.json({ error: error.message }, { status: 500 });
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+      if (isUuid) {
+        const { error } = await supabase.from("packages").delete().eq("id", id);
+        if (error) {
+          return NextResponse.json({ error: error.message }, { status: 500 });
+        }
       }
     }
 

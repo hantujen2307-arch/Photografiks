@@ -1,8 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
+import {
+  getSanitizedSupabaseUrl,
+  getSanitizedSupabaseServiceRoleKey,
+} from "./config";
 
 export function createAdminSupabaseClient() {
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const supabaseUrl = getSanitizedSupabaseUrl();
+  const serviceRoleKey = getSanitizedSupabaseServiceRoleKey();
 
   if (!supabaseUrl || !serviceRoleKey) {
     return null;
@@ -12,6 +16,15 @@ export function createAdminSupabaseClient() {
     auth: {
       autoRefreshToken: false,
       persistSession: false,
+    },
+    global: {
+      fetch: (url, options) => {
+        return fetch(url, {
+          ...options,
+          // 12 second timeout to prevent hanging requests on Vercel
+          signal: options?.signal || AbortSignal.timeout(12000),
+        });
+      },
     },
   });
 }
