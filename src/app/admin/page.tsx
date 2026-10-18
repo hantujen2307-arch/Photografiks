@@ -14,6 +14,8 @@ import {
   DollarSign,
 } from "lucide-react";
 import { Booking } from "@/types";
+import { DEFAULT_SITE_SETTINGS } from "@/lib/constants";
+import CuratedStudioQuickCard from "@/components/admin/CuratedStudioQuickCard";
 
 export const metadata = {
   title: "Admin Overview | MOMEN.POTRAIT",
@@ -34,6 +36,7 @@ export default async function AdminOverviewPage() {
   let recentBookings: Booking[] = [];
   let pendingQueue: Booking[] = [];
   let totalRevenue = 0;
+  let heroImageUrl = DEFAULT_SITE_SETTINGS.hero_image_url;
 
   const todayStr = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Jakarta",
@@ -45,12 +48,20 @@ export default async function AdminOverviewPage() {
   const supabase = await createServerSupabaseClient();
 
   if (supabase) {
-    // 1. Fetch statistics
-    const { data: allBookings } = await supabase
-      .from("bookings")
-      .select("*, package:packages(name)")
-      .order("created_at", { ascending: false });
+    // 1. Fetch statistics and site settings concurrently
+    const [bookingsRes, heroSettingRes] = await Promise.all([
+      supabase
+        .from("bookings")
+        .select("*, package:packages(name)")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "hero_image_url")
+        .maybeSingle(),
+    ]);
 
+    const allBookings = bookingsRes.data;
     if (allBookings) {
       totalBookings = allBookings.length;
       pendingCount = allBookings.filter((b) => b.status === "pending").length;
@@ -63,6 +74,18 @@ export default async function AdminOverviewPage() {
       totalRevenue = allBookings
         .filter((b) => b.status === "confirmed" || b.status === "completed")
         .reduce((acc, curr) => acc + Number(curr.total_price || 0), 0);
+    }
+
+    if (heroSettingRes?.data?.value) {
+      let val = heroSettingRes.data.value;
+      if (typeof val === "string" && val.startsWith('"') && val.endsWith('"')) {
+        try {
+          val = JSON.parse(val);
+        } catch {}
+      }
+      if (typeof val === "string" && val.trim().length > 0) {
+        heroImageUrl = val.trim();
+      }
     }
   } else {
     // Mock preview values
@@ -144,6 +167,9 @@ export default async function AdminOverviewPage() {
           </div>
         </div>
       </div>
+
+      {/* Hero / Curated Studio Quick Management Card */}
+      <CuratedStudioQuickCard currentHeroImage={heroImageUrl} />
 
       {/* Two Columns Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-8">

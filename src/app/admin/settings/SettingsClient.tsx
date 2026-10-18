@@ -14,6 +14,7 @@ import {
   Info,
   Upload,
   Image as ImageIcon,
+  Award,
 } from "lucide-react";
 import { SiteSettings, TestimonialItem, FaqItem } from "@/types";
 import { DEFAULT_SITE_SETTINGS, DEFAULT_TESTIMONIALS, DEFAULT_FAQS } from "@/lib/constants";
@@ -356,19 +357,22 @@ export default function SettingsClient() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Card 1: Foto Utama Hero (Signature Portrait) */}
-              <div className="p-5 rounded-2xl bg-[#FCFAF6] border border-[#E8E1D5] flex flex-col justify-between space-y-4">
+              {/* Card 1: Foto Curated Studio (Foto Utama Beranda / Hero) */}
+              <div className="p-5 rounded-2xl bg-[#FCFAF6] border-2 border-[#B8976C]/40 shadow-xs flex flex-col justify-between space-y-4">
                 <div>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs uppercase tracking-wider font-semibold text-[#161514]">
-                      1. Foto Utama Hero (Signature Portrait)
-                    </span>
-                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#EAE3D4] text-[#6B6862]">
-                      Rasio 4:5
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-1.5">
+                      <Award className="w-4 h-4 text-[#B8976C]" />
+                      <span className="text-xs uppercase tracking-wider font-bold text-[#161514]">
+                        1. Foto Curated Studio (Hero Beranda)
+                      </span>
+                    </div>
+                    <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded-full bg-[#161514] text-[#DFC9A8] font-semibold">
+                      Curated Studio
                     </span>
                   </div>
                   <p className="text-[11px] text-[#6B6862] mb-4">
-                    Foto portrait berukuran besar di sebelah kanan headline.
+                    Foto portrait berukuran besar di samping judul beranda dengan lencana bundar <strong>Curated Studio</strong>.
                   </p>
 
                   {/* Visual Preview */}
@@ -380,22 +384,34 @@ export default function SettingsClient() {
                         DEFAULT_SITE_SETTINGS.hero_image_url ||
                         "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1200&q=85"
                       }
-                      alt="Preview Foto Utama Hero"
+                      alt="Preview Foto Curated Studio"
                       fill
                       unoptimized
                       className="object-cover object-center"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
+
+                    {/* Exact Circular Curated Studio Badge */}
+                    <div className="absolute top-2.5 right-2.5 w-14 h-14 rounded-full bg-[#161514] text-[#FCFAF6] p-1 flex flex-col items-center justify-center text-center shadow-lg border border-white/25 pointer-events-none">
+                      <Award className="w-3.5 h-3.5 text-[#B8976C] mb-0.5" />
+                      <span className="text-[7px] uppercase tracking-widest font-semibold text-[#DFC9A8]">
+                        Curated
+                      </span>
+                      <span className="text-[6px] text-[#A9A59E] uppercase tracking-wider">
+                        Studio
+                      </span>
+                    </div>
+
                     <div className="absolute bottom-3 left-3 right-3 text-white pointer-events-none">
                       <span className="text-[8px] tracking-[0.2em] uppercase font-semibold text-[#DFC9A8] block">
-                        Signature Portrait
+                        Moment Grads Palembang
                       </span>
                       <span className="font-serif text-xs line-clamp-1">
-                        Natural Light &amp; Editorial Intimacy
+                        Aesthetic, Natural &amp; Timeless Memories
                       </span>
                     </div>
                     {heroImageFile && (
-                      <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold shadow-md">
+                      <div className="absolute top-2.5 left-2.5 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold shadow-md">
                         Foto Baru Terpilih
                       </div>
                     )}
@@ -502,7 +518,7 @@ export default function SettingsClient() {
                       className="object-cover object-center"
                     />
                     <div className="absolute bottom-2 left-2 right-2 bg-black/60 backdrop-blur-xs py-1 px-2 rounded text-[9px] text-white tracking-widest uppercase text-center font-sans pointer-events-none">
-                      Couple Story
+                      Graduation Story
                     </div>
                     {heroSecondaryFile && (
                       <div className="absolute top-2 right-2 px-2.5 py-1 rounded-full bg-emerald-600 text-white text-[10px] font-semibold shadow-md">

@@ -24,7 +24,7 @@ const NAV_ITEMS = [
   { href: "/admin/packages", label: "Paket Sesi", icon: Package },
   { href: "/admin/portfolio", label: "Galeri Portofolio", icon: ImageIcon },
   { href: "/admin/calendar", label: "Kalender & Jadwal", icon: CalendarDays },
-  { href: "/admin/settings", label: "Konten Website", icon: Settings },
+  { href: "/admin/settings", label: "Konten & Foto Beranda", icon: Settings },
 ];
 
 export default function AdminSidebar({

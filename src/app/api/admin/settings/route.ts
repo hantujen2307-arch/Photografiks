@@ -201,6 +201,7 @@ export async function PUT(request: NextRequest) {
       // Immediately purge ISR cache so homepage reflects the new photos
       try {
         revalidatePath("/");
+        revalidatePath("/admin");
         revalidatePath("/admin/settings");
       } catch (cacheErr) {
         console.warn("revalidatePath warning:", cacheErr);
