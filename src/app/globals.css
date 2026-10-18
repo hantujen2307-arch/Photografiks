@@ -1,26 +1,83 @@
 @import "tailwindcss";
 
+@theme {
+  --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
+  --font-sans: var(--font-jakarta), system-ui, -apple-system, sans-serif;
+
+  --color-ivory: #FCFAF6;
+  --color-ivory-light: #FDFBF9;
+  --color-beige-warm: #F4EFE6;
+  --color-beige-muted: #E8E1D5;
+  --color-sand: #C9BBA7;
+  --color-sand-deep: #9A8973;
+  --color-bronze: #846F54;
+  --color-gold-warm: #B8976C;
+  --color-charcoal: #161514;
+  --color-charcoal-soft: #232220;
+  --color-charcoal-muted: #4B4944;
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #FCFAF6;
+  --foreground: #161514;
+  --card: #FFFFFF;
+  --card-foreground: #161514;
+  --border: #E8E1D5;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom editorial selection */
+::selection {
+  background-color: #161514;
+  color: #FCFAF6;
+}
+
+/* Editorial subtle borders */
+.border-subtle {
+  border-color: rgba(22, 21, 20, 0.08);
+}
+
+.border-subtle-dark {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Custom scrollbar for modern browsers */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FCFAF6;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C9BBA7;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9A8973;
+}
+
+/* Elegant image overlay gradients */
+.editorial-overlay {
+  background: linear-gradient(180deg, rgba(22, 21, 20, 0) 40%, rgba(22, 21, 20, 0.75) 100%);
+}
+
+.editorial-overlay-full {
+  background: linear-gradient(180deg, rgba(22, 21, 20, 0.25) 0%, rgba(22, 21, 20, 0.7) 100%);
 }
