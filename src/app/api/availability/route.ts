@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPublicSupabase } from "@/lib/supabase/public";
 import { DEFAULT_PACKAGES, DEFAULT_BUSINESS_HOURS } from "@/lib/constants";
+import { getStoredPackages } from "@/lib/data/packages-store";
 import { timeToMinutes, minutesToTime } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -20,7 +21,8 @@ export async function GET(request: NextRequest) {
 
     // 1. Determine package duration
     let durationMinutes = 60;
-    const fallbackPkg = DEFAULT_PACKAGES.find((p) => p.id === packageId);
+    const storedPackages = getStoredPackages();
+    const fallbackPkg = storedPackages.find((p) => p.id === packageId) || DEFAULT_PACKAGES.find((p) => p.id === packageId);
     if (fallbackPkg) {
       durationMinutes = fallbackPkg.duration_minutes;
     }

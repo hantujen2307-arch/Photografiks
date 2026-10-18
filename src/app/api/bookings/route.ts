@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { DEFAULT_PACKAGES } from "@/lib/constants";
+import { getStoredPackages } from "@/lib/data/packages-store";
 import {
   generateBookingReference,
   timeToMinutes,
@@ -81,7 +82,8 @@ export async function POST(request: NextRequest) {
       verifiedDuration = pkg.duration_minutes;
       packageName = pkg.name;
     } else {
-      const fallback = DEFAULT_PACKAGES.find((p) => p.id === package_id);
+      const stored = getStoredPackages();
+      const fallback = stored.find((p) => p.id === package_id) || DEFAULT_PACKAGES.find((p) => p.id === package_id);
       if (fallback) {
         verifiedPrice = fallback.price;
         verifiedDuration = fallback.duration_minutes;

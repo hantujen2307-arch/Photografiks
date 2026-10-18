@@ -3,7 +3,8 @@ import Navbar from "@/components/common/Navbar";
 import Footer from "@/components/common/Footer";
 import BookingWizard from "@/components/booking/BookingWizard";
 import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
-import { DEFAULT_PACKAGES, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
+import { getStoredPackages } from "@/lib/data/packages-store";
+import { DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import { Sparkles, Loader2 } from "lucide-react";
 
 export const metadata = {
@@ -15,7 +16,7 @@ export const metadata = {
 export const revalidate = 60;
 
 export default async function BookingPage() {
-  let packages = DEFAULT_PACKAGES;
+  let packages = getStoredPackages();
   let settings = DEFAULT_SITE_SETTINGS;
 
   try {
@@ -32,7 +33,7 @@ export default async function BookingPage() {
 
       const [pkgRes, settingsRes] = await withTimeout(
         fetchPackagesAndSettings as any,
-        [{ data: DEFAULT_PACKAGES }, { data: [] }] as any,
+        [{ data: packages }, { data: [] }] as any,
         1500
       );
 

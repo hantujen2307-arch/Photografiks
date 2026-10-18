@@ -4,7 +4,8 @@ import Footer from "@/components/common/Footer";
 import PackagesSection from "@/components/home/PackagesSection";
 import FaqSection from "@/components/home/FaqSection";
 import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
-import { DEFAULT_PACKAGES, DEFAULT_FAQS, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
+import { getStoredPackages } from "@/lib/data/packages-store";
+import { DEFAULT_FAQS, DEFAULT_SITE_SETTINGS } from "@/lib/constants";
 import { Sparkles, Plus, CheckCircle2 } from "lucide-react";
 
 export const metadata = {
@@ -39,7 +40,7 @@ const ADD_ONS = [
 ];
 
 export default async function PackagesPage() {
-  let packages = DEFAULT_PACKAGES;
+  let packages = getStoredPackages();
   let faqs = DEFAULT_FAQS;
   const settings = DEFAULT_SITE_SETTINGS;
 
@@ -61,7 +62,7 @@ export default async function PackagesPage() {
 
       const [pkgRes, faqRes] = await withTimeout(
         fetchPackagesAndFaqs as any,
-        [{ data: DEFAULT_PACKAGES }, { data: DEFAULT_FAQS }] as any,
+        [{ data: packages }, { data: DEFAULT_FAQS }] as any,
         1500
       );
 

@@ -1,0 +1,86 @@
+[
+  {
+    "id": "pkg-1",
+    "slug": "solo-editorial",
+    "name": "The Solo Editorial",
+    "tagline": "Potret personal dengan estetika majalah fashion berkarakter kuat.",
+    "image_url": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "price": 850000,
+    "duration_minutes": 60,
+    "photo_count_text": "15 Foto Pilihan (High-End Retouch) + Semua File Asli",
+    "features": [
+      "1 Orang / Sesi Personal",
+      "60 Menit Sesi Foto Studio Eksklusif",
+      "2 Pilihan Konsep & Backdrop Studio",
+      "15 Foto Retouch Resolusi Tinggi (Editorial Grade)",
+      "Akses Link Google Drive Seluruh File Mentah (RAW/JPEG)",
+      "Pengarahan Pose Profesional oleh Fotografer",
+      "1 Cetak Fine Art 20x30 cm + Frame Minimalis"
+    ],
+    "is_active": true,
+    "sort_order": 1
+  },
+  {
+    "id": "pkg-2",
+    "slug": "couple-intimate",
+    "name": "Intimate Couple Story",
+    "tagline": "Merayakan cinta, kehangatan, dan kedekatan dua hati dalam potret abadi.",
+    "image_url": "https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&w=800&q=80",
+    "price": 1350000,
+    "duration_minutes": 90,
+    "photo_count_text": "25 Foto Pilihan (High-End Retouch) + Semua File Asli",
+    "features": [
+      "2 Orang (Pre-wedding / Anniversary / Couple Session)",
+      "90 Menit Sesi Foto Studio / Semi-Outdoor",
+      "3 Kali Ganti Kostum / Pakaian",
+      "25 Foto Retouch Resolusi Tinggi",
+      "Akses Link Google Drive Seluruh File Mentah",
+      "Panduan Moodboard & Konsep Visual Personal",
+      "2 Cetak Fine Art 20x30 cm + 1 Cetak Kanvas 30x45 cm"
+    ],
+    "is_active": true,
+    "sort_order": 2
+  },
+  {
+    "id": "pkg-3",
+    "slug": "graduation-heritage",
+    "name": "Graduation & Heritage",
+    "tagline": "Pencapaian berharga yang dirayakan bersama keluarga dan orang terkasih.",
+    "image_url": "https://images.unsplash.com/photo-1627556704290-2b1f5853ff78?auto=format&fit=crop&w=800&q=80",
+    "price": 1650000,
+    "duration_minutes": 90,
+    "photo_count_text": "30 Foto Pilihan (High-End Retouch) + Semua File Asli",
+    "features": [
+      "Maksimal 5 Orang (Wisudawan + Keluarga Inti)",
+      "90 Menit Sesi Foto Studio Lengkap",
+      "Foto Tunggal Wisuda + Foto Formasi Keluarga",
+      "30 Foto Retouch Resolusi Tinggi",
+      "Akses Link Seluruh File Asli Tanpa Batas",
+      "Properti Jubah, Topi & Ijazah Tersedia",
+      "1 Cetak Kanvas Keluarga 40x60 cm Elegan"
+    ],
+    "is_active": true,
+    "sort_order": 3
+  },
+  {
+    "id": "pkg-4",
+    "slug": "family-generations",
+    "name": "Family Generations",
+    "tagline": "Warisan kenangan keluarga lintas generasi yang penuh tawa dan kehangatan.",
+    "image_url": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80",
+    "price": 2250000,
+    "duration_minutes": 120,
+    "photo_count_text": "40 Foto Pilihan (High-End Retouch) + Semua File Asli",
+    "features": [
+      "Hingga 10 Anggota Keluarga",
+      "120 Menit Sesi Studio Nyaman & Ramah Anak/Lansia",
+      "Formasi Lengkap, Kakek-Nenek, Anak & Cucu",
+      "40 Foto Retouch Resolusi Tinggi",
+      "Akses Link Seluruh File Mentah",
+      "Lounge Privat & Refreshment Ringan Selama Sesi",
+      "1 Album Premium Hardcover 20x30 cm (20 Halaman)"
+    ],
+    "is_active": true,
+    "sort_order": 4
+  }
+]

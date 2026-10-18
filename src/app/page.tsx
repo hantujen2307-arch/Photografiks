@@ -7,8 +7,8 @@ import PackagesSection from "@/components/home/PackagesSection";
 import TestimonialsSection from "@/components/home/TestimonialsSection";
 import FaqSection from "@/components/home/FaqSection";
 import { getPublicSupabase, withTimeout } from "@/lib/supabase/public";
+import { getStoredPackages } from "@/lib/data/packages-store";
 import {
-  DEFAULT_PACKAGES,
   DEFAULT_PORTFOLIO,
   DEFAULT_TESTIMONIALS,
   DEFAULT_FAQS,
@@ -19,7 +19,7 @@ import {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  let packages = DEFAULT_PACKAGES;
+  let packages = getStoredPackages();
   let portfolio = DEFAULT_PORTFOLIO;
   let testimonials = DEFAULT_TESTIMONIALS;
   let faqs = DEFAULT_FAQS;
@@ -54,7 +54,7 @@ export default async function HomePage() {
       const [pkgRes, portRes, testRes, faqRes, settingsRes] = await withTimeout(
         fetchAllData,
         [
-          { data: DEFAULT_PACKAGES },
+          { data: packages },
           { data: DEFAULT_PORTFOLIO },
           { data: DEFAULT_TESTIMONIALS },
           { data: DEFAULT_FAQS },

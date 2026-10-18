@@ -490,6 +490,7 @@ export default function BookingWizard({
                           src={pkg.image_url}
                           alt={pkg.name}
                           fill
+                          unoptimized={pkg.image_url.startsWith("data:")}
                           className="object-cover object-center transition-transform duration-500 hover:scale-105"
                           sizes="(max-width: 768px) 100vw, 450px"
                         />
